@@ -1,0 +1,171 @@
+---
+title: "Module04Lecture"
+author: "Ethan Gutknecht"
+date: "3/1/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Module 04
+------
+
+
+## **McNemar Test for Paired Data**:
+
+#### **Description:**
+The test is in the form of categorical responses where one may be classified into one of two categories.These classifications are typically measured on the same individuals at two points in time to see if a change in opinion or status has occurred.
+
+
+#### **Assumptions:**
+1. X, Y are mutually independent
+2. Nomial with two categories
+
+
+#### **Hypothesis**
+$H_{0}$: pa = pb
+
+$H_{a}$: pa > pb (upper)
+$H_{a}$: pa < pb (lower)
+$H_{a}$: pa $ne$ pb (two)
+
+
+#### **Example (from slides):**
+1600 randomly selected persons were polled regarding their approval or disapproval of Barack Obama both immediately after the election and after the passage of the economic stimulus package of 2009. The results of the two surveys are given in the table below.
+
+**Part I: Label the parameters**
+Let Pa be the true porpoption of Obama's approval rating immediatley following hte election.
+
+Let Pb be the true proportion of Obama's approval rating immediatly following the passage of the stimulus package.
+
+**Part II: State null and alternative hypotheses**
+$H_{0}$: Pa = Pb
+$H_{a}$: Pa > Pb (upper)
+
+
+**Part III: Compute the point estimates of the parameters and a test statistic by hand (for the purpose of understanding the concept)**
+**Part IV: Write the null distribution in mathematical notation**
+Tn x^2(2)
+
+**Part V: Compute a test statistic and p-value using R**
+```{r}
+# Create the data structured for the test.
+Obama <- matrix(c(794, 86, 150, 570), nrow = 2, dimnames = list("Post Election" = c("Approve", "Disapprove"),"Post Stimulus" =
+c("Approve", "Disapprove")))
+
+#
+addmargins(Obama)
+
+# Perform test
+mcnemar.test(Obama, correct = FALSE)
+
+Onesidedpvalue = 3.099e-05/2
+Onesidedpvalue
+```
+
+**Part VI: State the conclusion of the hypothesis test in the context of the problem** 
+Since the P-value < 0.0001 < 0.05 the test rejects the null hypothessis. There is sufficient evidence to conclude that Obama's approval rating has significantly dropped the followuing passage of the stiumulus bill.
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+## **McNemar Test for Paired Data**:
+
+#### **Description:**
+
+
+
+#### **Assumptions:**
+
+
+
+#### **Hypothesis**
+$H_{0}$: 
+
+$H_{a}$: 
+
+
+#### **RCode:**
+
+```{r eval=FALSE}
+# # # # THIS CODE WILL NOT RUN, ONLY TO DEMONSTRATE # # # #
+```
+
+#### **Example (from slides):**
+
+**Part I:**
+**Part II:**
+**Part III:**
+$H_{0}$:
+$H_{a}$: 
+**Part IV:**
+**Part V: **
+**Part VI:** 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------
+
+
+## **McNemar Test for Paired Data**:
+
+#### **Description:**
+
+
+
+#### **Assumptions:**
+
+
+
+#### **Hypothesis**
+$H_{0}$: 
+
+$H_{a}$: 
+
+
+#### **RCode:**
+
+```{r eval=FALSE}
+# # # # THIS CODE WILL NOT RUN, ONLY TO DEMONSTRATE # # # #
+```
+
+#### **Example (from slides):**
+
+**Part I:**
+**Part II:**
+**Part III:**
+$H_{0}$:
+$H_{a}$: 
+**Part IV:**
+**Part V: **
+**Part VI:** 
+
+---------------------------

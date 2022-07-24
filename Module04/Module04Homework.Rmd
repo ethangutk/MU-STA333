@@ -1,0 +1,60 @@
+---
+title: "Module04Homework"
+author: "Ethan Gutknecht"
+date: "3/4/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Module04 - Homework
+
+## Question 1
+**One hundred thirty-five citizens were selected at random and were asked to state their opinion regarding U.S. foreign policy. Forty-three were opposed to U.S. foreign policy. After several weeks, during which they received an informative newsletter, they were again asked their opinions; 37 were opposed, and 30 of the 37 were persons who originally were not opposed to U.S. foreign policy. Is there sufficient evidence to conclude that the proportion of people opposed to U.S. foreign policy has significantly changed? Use the McNemar test. Use  = 0.05**
+  \
+  \
+  
+#### Part I
+**Label the parameter**
+
+Let Pa be the true proportion of the U.S foreign policy approval rating initially.
+
+Let Pb be the true proportion of the U.S foreign policy approval rating after the citizens received and read an informative news letter
+  \
+  \
+  
+#### Part II
+**State null and alternative hypotheses**
+
+$H_{0}$: Pa = Pb
+
+$H_{a}$: Pa $\neq$ Pb 
+  \
+  \
+  
+#### Part III
+**Compute a test statistic and p-value using R**
+```{r}
+# Create Table
+ForeignPolicy <- matrix(c(7, 30, 36, 62), nrow = 2, dimnames = list("Before" = c("Opposed", "Favor"),"After" = c("Opposed", "Favor")))
+
+# Perform Test
+mcnemar.test(ForeignPolicy, correct = FALSE)
+oneSidedPValue = 0.4602 / 2
+oneSidedPValue
+```
+  \
+  \
+  
+#### Part IV
+**State the conclusion of the hypothesis test in the context of the problem **
+
+Based on the results from our McNemar test. We can see that the p-value of 0.4602 is lower than our alpha value of 0.05. This means that we fail to reject the null hypothesis and favor the alternative. This means that there was a significant difference of the citizens opinions about U.S foreign policy before and after reading an informative news letter. There is sufficient evidence to conclude that there is a significant difference between the two proportions are correlated.
+  \
+  \
+  \
+  \
+  \
+  \

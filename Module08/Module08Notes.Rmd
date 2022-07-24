@@ -1,0 +1,159 @@
+---
+title: "Module08Notes"
+author: "Ethan Gutknecht"
+date: "4/26/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Module 08 - Notes
+## Review of Simple Linear Regression
+Question 1:
+A person’s muscle mass is expected to decrease with age. To explore this relationship in women, a nutritionist randomly selected 15 women from each 10-year age group beginning with age 40 and ending with age 79. The data reside in an excel sheet Muscle. The variables in the dataset are Age and Mass.
+
+###### Part I
+Investigate the relationship between age and muscle mass visually using a scatterplot. Describe scatterplot
+
+```{r eval=FALSE}
+Muscle <- read.csv("Muscle.csv", header = TRUE)
+
+plot(Mass~Age, data = Muscle, main ="Muscle Mass vs Age")
+```
+
+###### Part II:
+Using R, estimate the regression parameters. Report the regression equation using variable names. Interpret the slope of the regression line in context.
+
+```{r eval=FALSE}
+fit <- lm(Mass~Age, data = Muscle)
+summary(fit)
+```
+
+###### Part III:
+Find and interpret the 95% confidence interval for mean muscle mass in 65 years old women
+
+```{r eval=FALSE}
+predict(fit, newdata = data.frame(Age = 65), int ="conf")
+```
+
+###### Part IV:
+Overlay the regression line on the scatterplot
+```{r eval=FALSE}
+abline(fit, col = "Red")
+```
+
+
+
+
+---------------------------------------
+---------------------------------------
+---------------------------------------
+
+
+
+
+## Assessing the SLR Model Fit
+
+#### Assumptions:
+- Linearity (L)
+- Independence (I) - Collected randomly
+- Normality (N) - QQPlot, histogram of residuals
+- Equality of variance (E)
+
+
+There is a negative linear strong association between the age of muscle mass in women aged 40-79. As age increases the muscle mass decreases. Ther is no distinct outlier present so a simple linear regression modle seems viable here.
+
+0 <= r <= 0.4     WEAK
+0.4 <= r <= 0.8   MODERATE
+GREATER than 0.8  STRONG
+
+###### Part V:
+The normal QQ plot of the residual suggests that any violation of normality assumption because of the points follow a diagonal straight line. However the residual plot shows some megaphone or fanning effect suggesting the equal variance assumption.
+
+
+## Locally Weighted Scatterplot Smoothing
+Question 2: 
+A high respiratory rate is a potential diagnostic indicator of respiratory infection in children. To judge whether a respiratory rate is truly “high,” however, a physician must have a clear picture of the distribution of normal respiratory rates. To this end, Italian researchers measured the respiratory rates of n = 618 children between the ages of 15 days and 3 years (given in months). The data reside in an excel sheet Respiratory. The variables in the dataset are Age and Rate.
+
+###### Part I:
+Create residual plot of (X,e) and normal QQ plot of residual. Comment any assumption violations of simple linear regression
+
+```{r eval=FALSE}
+Respiratory <- read.csv("Respiratory", header = TRUE)
+
+
+fit <- lm(Rate~Age, data = Respiratory)
+par(mfrow=c(1,2))
+X <- Respiratory$Age
+e <- resid(fit)
+plot(X,e,ylab = "Residuals", xlab="Age", main="Residual Plot of (X,e)")
+abline(0,0, col = "Red")
+qqnorm(e)
+qqline(e)
+```
+Normal qq plot: a few points on the normal qq plot do nto follow the diagonal straight line this suggest a moderate voilation of normlaity assumoption.
+
+
+
+
+###### Part II:
+Fit a nonparametric LOESS regression curve to the data, and use it to calculate a 95% bootstrap confidence interval for the true mean respiratory rate for children aged 12 months. Interpret the bootstrap confidence interval for the true mean respiratory rate for children aged 12 months.
+
+```{r eval=FALSE}
+par(mfrow=c(1,2)) # set up two panels for our plots
+bootpred <- numeric(1000) # create vector to hold bootstrapped predictions
+hyp.age <- 12 # set the hypothesized x value for prediction
+rate.lo <- loess(Rate~Age, data = Respiratory)
+pred <- predict(rate.lo, data.frame(Age = hyp.age))
+```
+
+We can be 95% confident that the true mean respitary rate for children
+
+
+
+###### Part III:
+Generate a picture of the bootstrapped LOESS curves
+```{r eval=FALSE}
+x <- Respiratory$Age
+y <- Respiratory$Rate
+out <- loess(y~x, span = 0.3)
+plot(y~x, main="1000 bootstrapped LOESS curve fits")
+curve(predict(out, newdata=data.frame(x = x)), add=TRUE)
+n <- length(x)
+
+nboot <- 1000
+for (i in 1:nboot) {
+index <- sample(n, replace = TRUE)
+boot.x <- x[index]
+boot.y <- y[index]
+boot.out <- loess(boot.y~boot.x, span=0.3)
+curve(predict(boot.out, data.frame(boot.x = x)), add=TRUE,
+col="red")
+}
+points(x, y)
+curve(predict(out, newdata=data.frame(x = x)), add=TRUE, lwd=2)
+```
+
+
+###### Part IV:
+Find the same prediction (i.e. a 95% CI for the true mean respiratory rate in 12 months old children), only now using a conventional simple linear regression. How does the result compare to your bootstrap CI found from a LOESS model?
+```{r eval=FALSE}
+slrfit <- lm(Rate~Age, data = Respiratory)
+predict(slrfit, newdata=data.frame(Age=12), int="conf")
+```
+
+true mean respitory rate for 12 month olds of (38.08, 39.33). The loess model with bootstraping yeilds (35.17, 37.49).
+
+SLR(38.08, 39.33)
+Loess (35.17, 37.49)
+
+
+
+
+
+
+
+
+

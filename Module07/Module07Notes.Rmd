@@ -1,0 +1,169 @@
+---
+title: "Module07 - Notes"
+author: "Ethan Gutknecht"
+date: "4/12/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Module 07 - Notes
+
+### Introduction to Bootstrapping
+Permutation tests are an example of this: the theory behind them was developed long ago and is so straightforward and elegant, but they were impossible to perform in a practical sense with real world problems before resampling software came on the scene.
+
+NOTE: to be normal the sample size must be less than 30.
+
+### Advantages
+**Fewer Assumptions:** Resampling methods such as permutation tests or bootstrapping do not require normally distributed populations or large samples to work.
+
+**Generalizability:** Bootstrap method is remarkably similar for a wide array of different statistics, so it does not require new formulas or “starting from scratch” for every new statistic you encounter. It is easy to adapt the process to new problems.
+
+
+### Example
+Suppose the original sample
+is: 17, 10, 15, 21, 13, 18, indicate whether each sample below is a possible bootstrap sample from the original sample. Explain your reasoning.
+
+- Sample size must be equal
+- Elements must be from original sample
+
+1. 
+2. No
+3. Yes
+
+
+
+#### Example 2:
+A random sample of tenth-grade boys resulted in the following 20 observed weights. Construct and interpret a 95% bootstrap (percentile and BCa) confidence intervals for the mean weight of tenth-grade boys.
+
+###### Part I:
+The normal QQplot, histogram, and density plot suggests that the underlying population might not be normally distributed as requried by one sample t con
+```{r}
+Weight <- c(142, 103, 86, 165, 134, 154, 119, 81, 98, 122, 161, 117,119, 93, 144, 128, 131, 137, 158, 103)
+par(mfrow=c(1,2)) # sets up a plot window for two side-by-side plots
+qqnorm(Weight)
+qqline(Weight)
+hist(Weight, main = "Histogram of Weight", xlab = "Weight in Pounds", ylab = "Frequency")
+
+library(ggpubr)
+ggdensity(Weight, xlab = "Weight in Pounds", ylab= "Relative Frequency", main = "Density Plot of Weight")
+```
+###### Part II:
+
+###### Part III:
+```{r}
+bootmean <- numeric(1000)
+for (i in 1:1000) {bootsample <- sample(Weight, size=length(Weight), replace=TRUE)
+bootmean[i] <- mean(bootsample)
+}
+quantile(bootmean, c(0.025, 0.975))
+```
+
+
+###### Part IV:
+We are 95% confident that the mean weight of tenthgrade boys is between 113.85 and 135.35 pounds.
+
+##### Part V:
+The plots show that hte overall shape of Xbar is normally distributed.
+
+###### Part VI:
+```{r}
+xbar <- mean(Weight)
+est.bias <- mean(bootmean) - xbar
+est.bias
+```
+
+###### Part VII:
+```{r}
+library(boot)
+mymean <- function(Weight,i) mean(Weight[i])
+myboot <- boot(Weight, mymean, R = 1000)
+myboot
+```
+
+#### Example 3:
+###### Part I:
+```{r}
+A <- c(156, 183, 120, 113, 138, 145, 142)
+B <- c(109, 107, 119, 162, 121, 123, 76, 111, 130, 115)
+par(mfrow=c(1,2))
+
+hist(A, main = "Histogram of Diet A", xlab = "Growth", ylab = "Frequency")
+qqnorm(A)
+qqline(A)
+ggdensity(A, xlab = "Growth", ylab= "Relative Frequency", main = "Density Plot of Diet A")
+
+hist(B, main = "Histogram of Diet B", xlab = "Growth", ylab = "Frequency")
+qqnorm(B)
+qqline(B)
+ggdensity(B, xlab = "Growth", ylab= "Relative Frequency", main = "Density Plot of Diet B")
+```
+The normal qq plots histograms and denisty plots suggests that the underlying populations might not be normally distributed, as required by the two independent samplest-condifence interval for population means. Bootstrap condifence interval does not rquire the normality assumption.
+
+###### Part II;
+Let Ma be the mean grow of the rats under diet A.
+Let Mb be the mean grow of the rats under diet B.
+
+Let (Ma - Mb) be the difference between the mean growth of the rats under diet A and B.
+ 
+###### Part III;
+```{r}
+obs.diff <- mean(A) - mean(B)
+bootdiff <- numeric(1000)
+for (i in 1:1000) {
+  bootsampleA <- sample(A, size=length(A), replace=TRUE)
+  bootsampleB <- sample(B, size=length(B), replace=TRUE)
+  bootdiff[i] <- mean(bootsampleA) - mean(bootsampleB)
+}
+
+est.bias <- mean(bootdiff) - obs.diff
+est.bias
+
+
+par(mfrow=c(1,2))
+hist(bootdiff)
+abline(v=obs.diff)
+abline(v=mean(bootdiff),lty=2) # add dashed line mean of the bootstrap dist
+qqnorm(bootdiff)
+qqline(bootdiff)
+```
+The overall shape of the sampling distribution of the sampling mean difference is (approximated by bootstraping) approximately normally distributed.
+
+###### Part IV:
+```{r}
+library(boot)
+
+mymean <- function(bootdiff,i) mean(bootdiff[i])
+myboot <- boot(bootdiff, mymean, R = 1000)
+myboot
+```
+
+The mean of type A is greater than the mean B.
+
+We are 90% confident that the true mean growth due to diet A is between 23.79 and 24.90 higher than for diet B.
+
+
+
+
+
+
+
+
+# EXAM TWO NOTES
+- Date: 04-21-2022 Thusday Class Time
+- Four Questions total
+- Similar to in class exercises or homeworks + one conceptual question including definitions.
+- Three questions will be based on R printout
+- You are allowed to bring one-side page cheat sheet
+- Breakdown of points:
+    - module 5: 46 points
+    - module 6: 28 points
+    - module 7: 26 points
+    - Total 100 points
+- Example Question
+  - What does it mean by con dis etc.
+
+
+

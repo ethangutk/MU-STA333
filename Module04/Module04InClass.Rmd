@@ -1,0 +1,136 @@
+---
+title: "Module04 - In Class"
+author: "Ethan Gutknecht"
+date: "3/3/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Module 04
+
+## Question 1
+A study looked at the effects of togetherness on heart rate in rats. They recorded the heart rates of 10 rats while they were alone and while in the presence of another rat. Does there appear to be a difference in the median heart rates? Test using the sign test for two related samples. Use  = 0.05
+
+#### Part I
+**Why might the sign test for two related samples be preferred to the two dependent samples t-test for these data?**
+```{r warning=FALSE}
+# Create Data
+aloneRate <- c(463, 462, 462, 456, 450, 426, 418, 415, 409, 402)
+togetherRate <- c(523, 494, 461, 535, 476, 454, 448, 408, 470, 437)
+
+#
+d <- (togetherRate - aloneRate)
+
+par(mfrow=c(1,2))
+qqnorm(d)
+qqline(d)
+hist(d, xlab = "Heart Rate Differences", ylab = "Frequency",
+main = "Histogram of Heart Rate in Rats Alone vs Together")
+
+library(ggpubr)
+ggdensity(d, xlab ="Heart Rate Differences", ylab="Relative
+Frequency", main="Histogram of Heart Rate in Rats Alone vs Together")
+```
+Since the sample is collected randomly, the histogram, QQplot, and density plot suggest that the underlying population of differences are not normally distributed.
+
+
+#### Part II
+**Label the parameter**
+Mx = Median heart rate of rats when they are not together.
+My = Median heart rate of rats when they are together.
+
+
+#### Part III
+**State null and alternative hypotheses**
+
+$H_{0}$: Mx = My
+
+$H_{a}$: Mx =/= My
+
+
+
+#### Part IV
+**Compute a test statistic and p-value using R**
+```{r}
+# Perform test
+T <- length(d[d>0])
+
+# Zero fudge
+d <- d[d != 0]
+n <- length(d)
+binom.test(T, length(d[d != 0]), alternative="two.sided")
+
+```
+
+
+#### Part V
+**State the conclusion of the hypothesis test in the context of the problem**
+Since our p-value of 0.1094 is less than 0.05, we have sufficient evidence to fail to reject the null hypothesis. This means that the difference in the median heart rate of rats of when they're alone and with other rats have a significant difference.
+
+
+
+-----------------------------
+
+
+## Question 2
+Dickie et al. studied hemodynamic changes in patients with acute pulmonary thromboembolism. The table below shows the mean pulmonary artery pressure of nine of these patients before and 24 hours after urokinase therapy. We wish to know whether these data provide sufficient evidence to indicate that urokinase therapy lowers the median pulmonary artery pressure.  Test using Wilcoxon signed-ranks test for two related samples. Use  = 0.05
+
+#### Part I
+**Why might the Wilcoxon signed-ranks test for two related samples be preferred to the two dependent samples t-test for these data?**
+```{r}
+Before <- c(33, 17, 30, 25, 36, 25, 31, 20, 18)
+After <- c(21, 17, 22, 13, 33, 20, 19, 13, 9)
+
+d <- (After-Before)
+
+par(mfrow=c(1,2))
+qqnorm(d)
+qqline(d)
+hist(d, xlab = "Pulmonary Artery Pressure", ylab = "Frequency", main = "Histogram of the Difference of the Pulmonary Artery Pressure")
+
+library(ggpubr)
+ggdensity(d, xlab = "Pulmonary Artery Pressure", ylab="Relative Frequency", main="Density Plot of the Difference of the Pulmonary Artery Pressure")
+```
+
+#### Part II
+**Label the parameters.**
+Mx = Median of the pulmonary artery pressure at the start of the treatment
+
+My = Median of the pulmonary artery pressure of the population after 24 hours
+
+#### Part III
+**State null and alternative hypotheses.**
+
+$H_{0}$: Mx = My
+
+$H_{a}$: Mx < My
+
+#### Part IV
+**Compute a test statistic and p-value using R.**
+```{r warning=FALSE}
+library(coin)
+library(exactRankTests)
+wilcox.exact(After, Before, paired = TRUE, alternative = "less")
+```
+
+
+#### Part V
+**State the conclusion of the hypothesis test in the context of the problem.**
+Since our p-value of 0.0039 is less than our alpha value of 0.05, we have sufficient evidence to reject the null hypothesis. This means that there was a decreased in pulmonary artery pressure after the 24 hour time period.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

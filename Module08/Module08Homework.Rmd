@@ -1,0 +1,94 @@
+---
+title: "Module08 Homework"
+author: "Ethan Gutknecht"
+date: "5/1/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(1000)
+```
+
+# Question 1:
+**A researcher is interested in studying the effect of Nitrogen oxides (NOX) on the mortality rate of some species. The data reside in a csv sheet Pollution. The variables we will consider in the dataset are MORT and NOX.**
+
+
+
+#### Part I:
+**Create a residual plot of (X,e) and a normal QQ plot of residual. Comment any assumption violations of simple linear regression.**
+```{r warning=FALSE}
+library(tidyverse)
+Pollution <- read.csv("Pollution.csv", header = TRUE)
+
+plot(NOX~MORT, data = Pollution, main ="Mortality Rate vs SO2")
+X <- Pollution$SO2
+fit <- lm(NOX~MORT, data = Pollution)
+e <- resid(fit)
+plot(X,e,ylab = "Residuals", xlab="Levels", main="Residual Plot of (X,e)")
+abline(0,0, col = "Red")
+qqnorm(e)
+qqline(e)
+```
+The normal QQ plot has some major outlier points towards the left side of the graph. The residual plot also suggests that the normality assumption could be broken.
+
+#### Part II:
+**Fit a nonparametric LOESS regression curve to the data, and use it to calculate a 95% bootstrap confidence interval for the true mean mortality rate for some species with NOX level 4. Interpret the bootstrap confidence interval for the true mean mortality rate for some species with NOX level 4.**
+```{r warning=FALSE}
+par(mfrow=c(1,2)) # set up two panels for our plots
+bootpred <- numeric(1000) # create vector to hold bootstrapped predictions
+hyp.nox <- 4 # set the hypothesized x value for prediction
+rate.lo <- loess(MORT~NOX, data = Pollution)
+pred <- predict(rate.lo, data.frame(NOX = hyp.nox))
+
+plot(MORT~NOX, data = Pollution) # make scatterplot of the data points
+lines(Pollution$NOX, rate.lo$fit, col=2) # draw in the fitted loess curve
+for (i in 1:1000) {
+  n <- nrow(Pollution)
+  index <- sample(1:n, size=n, replace=TRUE)
+  bootdata<- data.frame(Mort=Pollution$MORT[index],NOX=Pollution$NOX[index])
+  bootfit <- loess(Mort~NOX, bootdata)
+  bootpred[i] <- predict(bootfit, data.frame(NOX = hyp.nox))
+} # extract predicted rate when age=12
+
+hist(bootpred) # picture of the bootstrap dist of predictions
+abline(v=pred) # add vertical line at the actual sample prediction
+abline(v=mean(bootpred),lty=2) # add dashed line at mean of the bootstrap distribution
+quantile(bootpred, c(0.025, 0.975)) # bootstrap CI for prediction
+```
+We are 95% confident that the mean mortality rate for spcies when NOX levels are at 4 is between 898.6463 and 927.3238. 
+
+#### Part III:
+**Generate a picture of the bootstrapped LOESS curves**
+```{r warning=FALSE}
+x <- Pollution$NOX
+y <- Pollution$MORT
+out <- loess(y~x, span = 0.9)
+plot(y~x, main="1000 bootstrapped LOESS curve fits")
+curve(predict(out, newdata=data.frame(x = x)), add=TRUE)
+n <- length(x)
+
+nboot <- 1000
+for (i in 1:nboot) {
+  index <- sample(n, replace = TRUE)
+  boot.x <- x[index]
+  boot.y <- y[index]
+  boot.out <- loess(boot.y~boot.x, span=0.75)
+  curve(predict(boot.out, data.frame(boot.x = x)), add=TRUE, col="red")
+}
+points(x, y)
+curve(predict(out, newdata=data.frame(x = x)), add=TRUE, lwd=2)
+```
+
+
+#### Part IV:
+**Find the same prediction (i.e. a 95% CI for the true mean mortality rate for some species with NOX level 4), only now using a conventional simple linear regression. How does the result compare to your bootstrap CI found from a LOESS model?**
+```{r warning=FALSE}
+slrfit <- lm(MORT~NOX, data = Pollution)
+predict(slrfit, newdata=data.frame(NOX=4), int="conf")
+```
+The simple linear regression yields a 95% confidence interval for the true mean mortality rate of some species (924.8006 959.7343) that was exposed to Nitrogen Oxides. The LOESS model with bootstrapping yielded (898.6463 927.3238) which means that the SLR model is overestimating the response at this point by a small amount.
+
+
+
+

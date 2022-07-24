@@ -1,0 +1,86 @@
+---
+title: "Module05InClass"
+author: "Ethan Gutknecht"
+date: "3/29/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Module 05 - In Class
+
+## Question 1:
+Four job training programs were tried on 20 new employees, where 5 employees were randomly assigned to each training program. The 20 employees were then placed under the same supervisor and, at the end of a certain specified period, the supervisor ranked the employees according to job ability, with the lowest ranks being assigned to those employees with the lowest job ability. Do these data indicate a significant difference in the various training programs? Apply the Van Der Waerden Test. Perform a multiple comparison procedure (if warrant). Use  = 0.05.
+
+#### Part I:
+**Why might the Van Der Waerden test be preferred to the one-way ANOVA F-test for these data?**
+```{r}
+Program <- c(1, 1, 1, 1, 1,
+           2, 2, 2, 2, 2,
+           3, 3, 3, 3, 3,
+           4, 4, 4, 4, 4)
+Ranks <- c(4, 6, 7, 2, 10,
+          1, 8, 12, 3, 11,
+          20, 19, 16, 14, 5,
+          18, 15, 17, 13, 9)
+EmployeeTraining <- data.frame(Program, Ranks)
+boxplot (Ranks ~ Program, data = EmployeeTraining, main = "Side by Side Boxplot")
+```
+
+Based on the box plots that we created, we can see that the variance of each of the populations differ drastically. We can see this clearly looking at box plot of program two and one. Thus, this may bring the problem of breaking the equal variance assumption that is required for the one way anova test. Thus, the Van Der Waerden test is a great alternative because it does not require that assumption.
+
+
+#### Part II:
+**Label the parameters**
+Let M1 be the mean job ability rank for program 1
+Let M2 be the mean job ability rank for program 2
+Let M3 be the mean job ability rank for program 3
+Let M4 be the mean job ability rank for program 4
+
+
+#### Part III:
+**State null and alternative hypotheses**
+Ho: The rank distribution functions for all four job training programs are identical
+Ha: At least one of the four job training program's rank distribution is different.
+
+
+#### Part IV:
+**Write the null distribution in mathematical notation**
+
+
+#### Part V:
+**Compute a test statistic and p-value using R**
+```{r eval=TRUE}
+library(agricolae)
+
+waerden.test(Ranks, Program, alpha = 0.05, group = TRUE, main = NULL, console = TRUE)
+```
+
+
+#### Part VI:
+**State the conclusion of the hypothesis test in the context of the problem**
+As we look at the results of this test, we can see that the p-value of 0.0256 is less than our alpha value of 0.05. Thus, we fail to reject the null hypothesis. This means that we have sufficient evidence to conclude that all of the at least one of the four distribution of the job program ranks are different.
+
+
+#### Part VII:
+**Summarize the result of nonparametric multiple comparison procedure (if warrant)**
+
+```{r}
+library(excelR)
+
+data = data.frame(Comparison = c("1 vs 2", "1 vs 3", "1 vs 4", "2 vs 3", "2 vs 4", "3 vs 4"), pvalue = c(0.84, 0.0079, 0.0164, 0.0121, 0.0249, 0.7292))
+columns = data.frame(title=c("Comparison", "p-value"), width=c(300, 300), type=c("text", "dropdown"), source = I(list(0, c(0.84, 0.0079, 0.0164, 0.0121, 0.0249, 0.7292))))
+
+excelTable(data=data, columns = columns)
+```
+As we can see from the results, all the pairs but 3v4 and 1v2 have different distributions. Pairs 1v3, 1v4, 2v3, 2v4 are different.
+
+
+
+
+
+
+
+

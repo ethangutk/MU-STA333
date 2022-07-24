@@ -1,0 +1,143 @@
+---
+title: "Module08InClass"
+author: "Ethan Gutknecht"
+date: "4/28/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(100)
+```
+
+# Question 1:
+**A researcher is interested in studying the effect of Sulfur dioxide (SO2) on the mortality rate of some species. The data reside in a csv sheet Pollution.  The variables we will consider in the dataset are MORT and SO2.**
+
+#### Part I:
+**Create a residual plot of (X,e) and a normal QQ plot of residual. Comment any assumption violations of simple linear regression.**
+```{r warning=FALSE}
+library(tidyverse)
+Pollution <- read.csv("Pollution.csv", header = TRUE)
+
+plot(SO2~MORT, data = Pollution, main ="Mortality Rate vs SO2")
+X <- Pollution$SO2
+fit <- lm(SO2~MORT, data = Pollution)
+e <- resid(fit)
+plot(X,e,ylab = "Residuals", xlab="Age", main="Residual Plot of (X,e)")
+abline(0,0, col = "Red")
+qqnorm(e)
+qqline(e)
+```
+We can 
+
+
+#### Part II:
+**Fit a nonparametric LOESS regression curve to the data, and use it to calculate a 95% bootstrap confidence interval for the true mean mortality rate for some species with SO2 level 16. Interpret the bootstrap confidence interval for the true mean mortality rate for some species with SO2 level 16.**
+```{r warning=FALSE}
+par(mfrow=c(1,2)) # set up two panels for our plots
+bootpred <- numeric(1000) # create vector to hold bootstrapped predictions
+hyp.so2 <- 16 # set the hypothesized x value for prediction
+rate.lo <- loess(MORT~SO2, data = Pollution)
+pred <- predict(rate.lo, data.frame(SO2 = hyp.so2))
+
+plot(MORT~SO2, data = Pollution) # make scatterplot of the data points
+lines(Pollution$SO2, rate.lo$fit, col=2) # draw in the fitted loess curve
+for (i in 1:1000) {
+  n <- nrow(Pollution)
+  index <- sample(1:n, size=n, replace=TRUE)
+  bootdata<- data.frame(Mort=Pollution$MORT[index],SO2=Pollution$SO2[index])
+  bootfit <- loess(Mort~SO2, bootdata)
+  bootpred[i] <- predict(bootfit, data.frame(SO2 = hyp.so2))
+} # extract predicted rate when age=12
+
+hist(bootpred) # picture of the bootstrap dist of predictions
+abline(v=pred) # add vertical line at the actual sample prediction
+abline(v=mean(bootpred),lty=2) # add dashed line at mean of the bootstrap distribution
+quantile(bootpred, c(0.025, 0.975)) # bootstrap CI for prediction
+```
+We can be 95% confident that the mortality rate is between 892 and 935.
+
+
+#### Part III:
+**Generate a picture of the bootstrapped LOESS curves**
+```{r warning=FALSE}
+x <- Pollution$SO2
+y <- Pollution$MORT
+out <- loess(y~x, span = 0.75)
+plot(y~x, main="1000 bootstrapped LOESS curve fits")
+curve(predict(out, newdata=data.frame(x = x)), add=TRUE)
+n <- length(x)
+
+nboot <- 1000
+for (i in 1:nboot) {
+  index <- sample(n, replace = TRUE)
+  boot.x <- x[index]
+  boot.y <- y[index]
+  boot.out <- loess(boot.y~boot.x, span=0.75)
+  curve(predict(boot.out, data.frame(boot.x = x)), add=TRUE, col="red")
+}
+points(x, y)
+curve(predict(out, newdata=data.frame(x = x)), add=TRUE, lwd=2)
+```
+
+#### Part IV:
+**Find the same prediction (i.e. a 95% CI for the true mean mortality rate for some species with SO2 level 16), only now using a conventional simple linear regression. How does the result compare to your bootstrap CI found from a LOESS model?**
+```{r warning=FALSE}
+slrfit <- lm(MORT~SO2, data = Pollution)
+predict(slrfit, newdata=data.frame(SO2=16), int="conf")
+```
+
+
+-----------------------------------------------
+
+
+
+# Question 2:
+**In a study on speed control, it was found that the main reasons for regulations were to make traffic flow more efficient and to minimize the risk of danger. An area that was focused on in the study was the braking distance required to completely stop a vehicle at various speeds. A random sample from the study is given below. Researchers are interested in investigating the effect of speed (in mph) on the braking distance required to completely stop a vehicle (in feet).**
+
+#### Part I:
+**Investigate the relationship between speed and braking distance visually using a scatterplot. Describe scatterplot**
+```{r warning=FALSE}
+Speed <- c(20, 30, 40, 50, 60, 70)
+brakingDistance <- c(20, 45, 81, 133, 205, 	299)
+
+plot(brakingDistance~Speed, main ="Speed vs. Breaking Distance")
+```
+Looks pretty good to me. It trends positively as the speed goes up. It looks like a quadratic relationship- not linear.
+
+
+#### Part II:
+**Using R, estimate the regression parameters. Interpret the slope of the regression line in context**
+```{r warning=FALSE}
+fit <- lm(brakingDistance~Speed)
+summary(fit)
+```
+The adjusted R squared value being 0.9358 suggests that there is a strong positive correlation between Speed and breaking distance.
+
+#### Part III:
+**Find and interpret the 95% confidence interval for the mean braking distance of a vehicle with a speed of 30 mph**
+```{r warning=FALSE}
+predict(fit, newdata = data.frame(Speed = 30), int ="conf")
+```
+We can be 95% confident that the braking distance of a car going 30mph is between 7.49 and 88.33 feet.
+
+#### Part IV:
+**Create a residual plot of (X,e) and a normal QQ plot of residual. Comment any assumption violations of simple linear regression. Describe**
+```{r}
+par(mfrow=c(1,2)) # Set up two panels for our plots
+X <- Speed
+e <- resid(fit)
+plot(X,e,ylab = "Residuals", xlab="Speed", main="Residual Plot of (X,e)")
+abline(fit, col = "Red")
+qqnorm(e)
+qqline(e)
+```
+
+#### Part V:
+**For these data, would you prefer parametric regression analysis or a nonparametric LOESS regression? Explain**
+
+Parametic data because this type of application only works well with biggest data sets to be reliable.
+
+
+
+

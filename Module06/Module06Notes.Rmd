@@ -1,0 +1,196 @@
+---
+title: "Module06 - Notes"
+author: "Ethan Gutknecht"
+date: "3/31/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Module 06 - Notes
+
+## Spearman’s Correlation Coefficient (ρ)
+
+Ranked based correlation coefficient. Simply Pearson's correlation coefficient computed the ranks of X and Y. Not locked into investigating a specific relationship. We are testing the **monotonicity**.
+
+##### Hypothesis
+H0: ρ = 0 (i.e. the two variables are mutually independent)
+versus one of the three following possible alternatives:
+
+Ha: ρ ≠ 0 two-sided test, stating that the two variables are linearly
+related)
+
+Ha: ρ > 0 (upper-tail test, stating that the two variables are positively linearly related)
+
+Ha: ρ < 0 (lower-tail test, stating that the two variables are negatively
+linearly related)
+
+##### T-Stat
+The significance of the spearman's correlation coefficient can be tested using following statistics.
+
+##### Example
+
+Five doctorial students took a test on current affairs. The ages of the students and their test scores ae below. Do the older students tend to get the higher test scores. Use Spearmans Rho. Let alpha = 0.05.
+
+###### Part I:
+```{r}
+
+Age <- c(24, 31, 38, 45, 45)
+Score <- c(68, 85, 84, 92, 90)
+plot(Score ~ Age, pch = 20, main = "Scatterplot of Test Scores", ylab = "Scores", xlab="Age")
+
+```
+The scatter plot suggests that the association between the ages and thest scores does not appear to be linear as requried for the Pearsons correlation coefficient. The Spearmans Rho does not require a linear relatiooship between variables
+
+
+###### Part II:
+Use R to calculate the Spearman’s Correlation coefficient for
+these data
+
+
+###### Part III:
+State null and alternative hypothesis
+
+###### Part IV:
+Compute a test statistic and p-value using R
+
+```{r}
+
+```
+
+###### Part V:
+
+Note: S = (N^3 - N)(1-r) / 6
+
+= 2.56
+
+Since the p-value = 0.0269 < alpha = 0.05. The test rejects the null hypothesis. There is sufficient evidence to conclude that the older students tend to get hte higher test scores (p = 0.87, s=2.56, p=0.0269)
+
+
+
+
+
+
+
+## A Permutation Test for the Spearman’s Correlation Coefficient (ρ)
+
+##### Example:
+
+###### Part I:
+Why might the Spearman’s Rho be preferred to the Pearson’s Correlation Coefficient for these data?
+```{r}
+Husband <- c(147, 158, 131, 142, 183, 151, 196, 129, 155, 158)
+Wife <- c(122, 128, 125, 123, 115, 120, 108, 143, 124, 123)
+plot(Husband ~ Wife, pch = 20, main = "Scatterplot of Bowling Scores", ylab = " Husband's Scores", xlab="Wife's Scores")
+```
+
+The scatter plot suggests the association between the husband and wife's bowling scores does not appear to be linear as required for the pearsons correlation coefficient. The spearmans rho does not require the linear association between two variables.
+
+
+###### Part II:
+State null and alternative hypothesis
+
+In mathimatical notation
+Ho: p = 0
+Ha: p ne 0
+
+In words:
+Ho: The husband and wife's scores are mutually independent.
+Ha: The husband and wife's scores tend to be concordant or discordant. In other words, either there is a tendency for large husbands scores to be paired with large wifes scores or there is a tendency for large husbands scores to be paired with small wifes scores.
+
+
+
+###### Part III:
+Compute the Spearman’s Correlation coefficient and p-value for these data using R
+```{r}
+R <- 9999
+reps <- numeric(R)
+# Calculate the observed Spearman rank correlation
+spearmancorr <- cor(Husband, Wife, method = "spearman")
+spearmancorr
+```
+
+```{r}
+for (i in 1:R) {
+x <- Husband
+y <- sample(Wife, replace = FALSE)
+reps[i] <- cor(y, x, method = "spearman")
+}
+pvalue <- mean(c(spearmancorr, reps) <= spearmancorr)
+pvalue
+
+## If you rerun the program, you will NOT necessarily get the same p-value
+twotailedpvalue = 2*pvalue
+twotailedpvalue
+```
+
+
+###### Part IV:
+State the conclusion of the hypothesis test in the context of the problem
+
+Since the pvalue of 0.0628 is > 0.05. The test fails to rejcect the null hypothesis. There is insufficient evidence to conclude that the husband and wifes bowling scores tend to be concordant or discordant.
+
+
+
+## Kendall's Correlation Coefficient ()
+
+##### Hypothesis
+Ho:two variables are mutually independent
+
+Ha: T  0 pairs of observations either tend to be concordant or tend to be discordant.
+
+Ha:T < 0
+
+Ha:T > 0
+
+
+##### Example:
+A study is conducted to investigate the relationship between cigarette smoking during pregnancy and the weights of newborn infants. The 15 women smokes who make up the sample kept an accurate records of the number of cigarettes smoked per day during their pregnancies, and the weights of their children were recorded at birth. Use Kendall Tau to determine whether the level of cigarette smoke and weights of newborns are negatively correlated for all smoking mothers. Use alpha = 0.05.
+
+###### Part I:
+Why might the Kendall’s Tau be preferred to the Pearson’s
+Correlation Coefficient for these data?
+
+```{r}
+Cigarette <- c(12, 15, 35, 21, 20, 17, 19, 46, 20, 25, 39, 25, 30, 27, 29)
+
+Weight <- c(7.7, 8.1, 6.9, 8.2, 8.6, 8.3, 9.4, 7.8, 8.3, 5.2, 6.4, 7.9, 8.0, 6.1, 8.6)
+
+plot(Weight ~ Cigarette, pch = 20, main = "Scatterplot of Weight of
+Infants", ylab = "Weight (Pounds)", xlab="Number of Cigarettes")
+```
+
+The scatter plot suggests that the association between cigarette smoking and weights of newborns does not appear to be linear as required for the persons correlation coefficient. Kendalls Tau does not require a linear assocaitation between two variables.
+
+###### Part II:
+Use R to calculate the Kendall’s Correlation coefficient for these data
+```{r}
+cor(Cigarette, Weight, method = "kendall")
+```
+
+
+###### Part III:
+State null and alternative hypothesis
+
+Ho: Tau = 0, Ha T < 0
+
+In Words: 
+Ho:The level of cigarette smoking of weights of newborns are mutually independent.
+Ha: The level of cigarette smoking and weights of newborns are negatively correlated.
+
+
+###### Part IV:
+Compute a test statistic and p-value using R
+
+```{r}
+cor.test(Cigarette, Weight, alternative = "less", method = "kendall", use = "complete.obs")
+```
+
+###### Part V:
+State the conclusion of the hypothesis test in the context of the
+problem
+
+Since the P-value of 0.0746 > 0.05. The test fails to reject the null hypothesis. There is insufficient evidence to conclude that a negative correlation exists between the number of cigarettes smokes and the weights of newborns for the population of measurements corresponding to all smoking mothers. (T = -0.28, Z=-1.44,c p=0.0746).
+

@@ -1,0 +1,166 @@
+---
+title: 'Module 01: In-Class Exercise'
+author: "Ethan Gutknecht"
+date: "1/27/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### HEADER 4: **Task 1:** Changing The Header Size, bold, and italics **(5 Points)**
+
+### HEADER 3: **Task 1:** Changing The Header Size, bold, and italics **(5 Points)**
+
+## HEADER 2: **Task 1:** Changing The Header Size, bold, and italics **(5 Points)**
+
+# HEADER 1: **Task 1:** Changing The Header Size, bold, and italics **(5 Points)**
+
+**BOLD TEXT: This is STA333 class.**
+
+*ITALIC TEXT: This is STA333 class.*
+
+
+--------
+
+
+#### **Task 2:** Writing the most commonly used statistical symbols. **(10 Points)**
+
+
+Population Mean: $\mu$
+
+Population proportion: *p*
+
+Population standard deviation: $\sigma$ 
+
+Level of significance equal 0.05: $\alpha = 0.05$
+
+p-value: $p$-value
+
+Chi-square distribution with three degrees of freedom:
+$\chi$ ^2^~(3)~
+
+
+
+#### **Task 3:** Writing the null and alternative hypotheses. **(55 Points)**
+
+$H_{0}$: *M* = 4 Miles
+
+$H_{a}$: *M* $\neq$ 4 Miles
+
+$H_{0}$: *M* < 4 Miles
+
+<br>
+
+$H_{0}$: *p* = 0.85
+
+$H_{a}$: *p* $\neq$ 0.85
+
+$H_{0}$: *p* > 0.85
+
+<br>
+
+$H_{0}$: $M_{1}$ = $M_{2}$
+
+$H_{a}$: $M_{1}$ $\neq$ $M_{2}$
+
+$H_{0}$: $M_{1}$ < $M_{2}$
+
+<br>
+
+$H_{0}$: $\rho$ = 0
+
+$H_{a}$: $\rho \neq$ 0
+
+$H_{0}$: $\rho$ > 0
+
+<br>
+
+$H_{0}$: $\tau$ = 0
+
+$H_{a}$: $\tau$ $\neq$ 0
+
+$H_{0}$: $\tau$ < 0
+
+<br>
+
+$H_{0}$: $\sigma_{1}$ = $\sigma_{2}$
+
+$H_{a}$: $\sigma_{1}$ $\neq$ $\sigma_{2}$
+
+$H_{0}$: $\sigma_{1}$ > $\sigma_{2}$
+
+<br>
+
+#### **Task 4:** Formatting texts **(5 Points)**
+
+*t*-test
+
+`t-test`
+
+Chi-square test
+
+`Chi-square test`
+
+Kruskal-Wallis test
+
+`Kruskal-Wallis test`
+
+
+#### **Task 5:** Installing R packages **(5 Points)**
+
+Console Output from (coin) package: <br>
+package ‘zoo’ successfully unpacked and MD5 sums checked
+package ‘TH.data’ successfully unpacked and MD5 sums checked
+package ‘sandwich’ successfully unpacked and MD5 sums checked
+package ‘libcoin’ successfully unpacked and MD5 sums checked
+package ‘modeltools’ successfully unpacked and MD5 sums checked
+package ‘multcomp’ successfully unpacked and MD5 sums checked
+package ‘coin’ successfully unpacked and MD5 sums checked
+
+
+#### **Task 6:** Creating a data vector **(10 Points)**
+
+```{r}
+
+Ethan <- c(142, 103, 86, 165, 134, 154, 119, 81, 98, 122, 161, 117,119, 93, 144, 128, 131, 137, 158, 103)
+
+qqnorm(Ethan)
+qqline(Ethan)
+
+```
+
+
+
+#### **Task 7:** Reading in a CSV file on R **(10 Points)**
+
+```{r}
+# Read from CSV file
+CSVData <- read.csv("Engine.csv", header = TRUE)
+
+qqnorm(CSVData$Emission)
+qqline(CSVData$Emission)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,83 @@
+---
+title: "Module07 Homework"
+author: "Ethan Gutknecht"
+date: "4/19/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Question 1:
+Sixteen  applications  to  a  graduate  program  in  psychology  have  been received from two universities, North Carolina and Duke.  Nine came from UNC and seven from Duke.  Each applicant included their score on the GRE (Graduate Records Exam), and those scores appear below:
+```{r}
+UNC <- c(1200, 1170, 1000, 1010, 980, 1400, 1430, 1390, 970)
+Duke <- c(1220, 1200, 1300, 1170, 1080, 1110, 1190)
+```
+
+
+### Part I:
+Why might the bootstrap confidence interval be preferred to the two independent random samples t-confidence interval for population means for these data?
+```{r}
+library(ggpubr)
+par(mfrow=c(1,2))
+
+hist(Duke, main = "Histogram of GRE scores from Duke", xlab = "GRE Scores", ylab = "Frequency")
+qqnorm(Duke)
+qqline(Duke)
+ggdensity(Duke, xlab = "GRE Scores", ylab= "Relative Frequency", main = "Density Plot of GRE Scores from Duke")
+
+hist(UNC, main = "Histogram of GRE scores from UNC", xlab = "GRE Scores", ylab = "Frequency")
+qqnorm(UNC)
+qqline(UNC)
+ggdensity(UNC, xlab = "GRE Scores", ylab= "Relative Frequency", main = "Density Plot of GRE Scores from UNC")
+```
+The bootstrap method will be preferred due to the data being of a smaller variety and non-normal.
+
+### Part II:
+Label the parameters
+
+Let Ma be the mean GRE Scores of students at Duke. 
+Let Mb be the mean GRE Scores of students at UNC. 
+
+Let (Ma - Mb) be the difference between the mean GRE scores of students between UNC and Duke students.
+
+
+
+### Part III:
+From  the  bootstrap  distribution  for  the  sample  mean  differences,  calculate  the estimated bias. Comment the overall shape of the sampling distribution of sample mean differences (as approximated by bootstrapping) 
+```{r}
+obs.diff <- mean(UNC) - mean(Duke)
+bootdiff <- numeric(1000)
+for (i in 1:1000) {
+  bootsampleUNC <- sample(UNC, size=length(UNC), replace=TRUE)
+  bootsampleDuke <- sample(Duke, size=length(Duke), replace=TRUE)
+  bootdiff[i] <- mean(bootsampleUNC) - mean(bootsampleDuke)
+}
+
+est.bias <- mean(bootdiff) - obs.diff
+est.bias
+
+
+par(mfrow=c(1,2))
+hist(bootdiff)
+abline(v=obs.diff)
+abline(v=mean(bootdiff),lty=2) # add dashed line mean of the bootstrap dist
+qqnorm(bootdiff)
+qqline(bootdiff)
+```
+The estimated Bias for our sample mean differences is around 0.4. The overall shape of the sample mean differences is approximately normal.
+
+
+### Part IV:
+Construct and interpret a 95% bootstrap confidence interval (BCa based) for the true mean difference in GRE scores between UNC and Duke using R add-on package boot.
+```{r}
+library(boot)
+
+mymean <- function(bootdiff,i) mean(bootdiff[i])
+myboot <- boot(bootdiff, mymean, R = 1000)
+myboot
+```
+We are 90% confident that the true mean growth due to UNC students is between 8.8 lower than Duke students.
+

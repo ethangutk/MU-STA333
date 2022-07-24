@@ -1,0 +1,166 @@
+---
+title: "Module 03 - In Class"
+author: "Ethan Gutknecht"
+date: "2/22/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Question 1:
+In a controlled environment laboratory, 10 men and 10 women were tested to determine the room temperature they found to be the most comfortable. Assuming that the temperatures resemble a random sample from their respective populations, is the median comfortable temperature the same for men and women? Use the Mann-Whitney test. Use  = 0.05
+
+```{r}
+# Get Data;
+q1men <- c(74, 72, 77, 76, 76, 73, 75, 73, 74, 75)
+q1women <- c(75, 77, 78, 79, 77, 73, 78, 79, 78, 80)
+```
+
+### Part I:
+Why might the Mann-Whitney test be preferred to the two independent samples t-test for these data?
+
+```{r}
+# Create graphics to prove that they are not normal
+
+par(mfrow=c(1,2))
+qqnorm(q1men)
+qqline(q1men)
+hist(q1men, main = "Histogram of Temperature Men Found Most Comfortable", xlab = "Temperature", ylab = "Frequency")
+
+par(mfrow=c(1,2))
+qqnorm(q1women)
+qqline(q1women)
+hist(q1women, main = "Histogram of Temperature Women Found Most Comfortable", xlab = "Temperature", ylab = "Frequency")
+
+
+
+# Density Plot
+library(ggpubr)
+ggdensity(q1men, xlab ="High Temperature", ylab="Relative
+Frequency", main="Density Plot of Temperature Men Found Most Comfortable")
+
+ggdensity(q1women, xlab ="High Temperature", ylab="Relative
+Frequency", main="Density Plot of Temperature Women Found Most Comfortable")
+```
+
+Based on these plots, one of the requirements for the two sample t-test is for both populations to be normally distributed. As we can see from density plot of the women's population, we can see that the population is not normally distributed.
+
+
+
+### Part II:
+Label the parameter
+
+Let M1 be the median comfortable room temperature for men.
+Let M2 be the median comfortable room temperature for women.
+
+
+
+### Part III:
+State null and alternative hypotheses
+
+$H_{0}$: M1 = M2
+
+$H_{a}$: M1 $\neq$ M2
+
+
+
+### Part IV:
+Compute a test statistic and p-value using R
+
+```{r warning=FALSE}
+# Compute the test stat in R
+library(coin)
+library(exactRankTests)
+
+wilcox.exact(q1men, q1women, alternative = "two.sided", paired = FALSE, conf.level = 0.95)
+```
+
+
+
+### Part V:
+Since the p-value of 0.003237 is less than our alpha value of 0.05, our test rejects the null hypothesis and we have sufficient evidence that the median of the comfortable temperature for men differ from the median of the comfortable temperature for women.
+
+
+
+----------------------------------------------------------------------------------------
+
+
+
+# Question 2:
+A blood bank kept a record of the rate of heartbeats for several blood donors. Is the variation among the men significantly greater than the variation among the women? Use the Ansari-Bradley test. Use  = 0.05 
+
+### Part I:
+```{r}
+# Get Data;
+q2men <- c(58, 76, 82, 74, 79, 65, 74, 86)
+q2women <- c(66, 74, 69, 76, 72, 73, 75, 67, 68)
+
+# Load Package For Density Plot
+library(ggpubr)
+
+# See if data will fit this test for first population
+par(mfrow=c(1,2))
+qqnorm(q2men)
+qqline(q2men)
+hist(q2men, main = "Histogram of Heartbeats For Male Blood Doners",
+xlab = "Heartbeat (BPM)", ylab = "Frequency of Doners")
+ggdensity(q2men, xlab ="Heartbeat (BPM)", ylab="Relative
+Frequency", main="Histogram of Heartbeats For Female Blood Doners")
+
+
+## See it for the other population
+qqnorm(q2women)
+qqline(q2women)
+hist(q2women, main = "Histogram of Heartbeats For Female Blood Doners",
+xlab = "Heartbeat (BPM)", ylab = "Frequency of Doners")
+ggdensity(q2women, xlab ="Heartbeat (BPM)", ylab="Relative
+Frequency", main="Histogram of Heartbeats For Female Blood Doners")
+```
+Neither population is normally distributed so we cannot use the F-test. Thus, our next best option is the Ansari-Bradley test.
+
+
+### Part II:
+Label the parameters.
+
+Let $sigma_{m}$ be the true dispersion parameter for the overall BPM measurement for men.
+
+Let $sigma_{w}$ be the true dispersion parameter for the overall BPM measurement for women.
+
+
+### Part III:
+State null and alternative hypotheses.
+
+$H_{0}$: $\sigma_{m}$ = $\sigma_{w}$
+
+$H_{a}$: $\sigma_{m}$ > $\sigma_{w}$
+
+
+
+### Part VI:
+Compute a test statistic and p-value using R.
+
+```{r}
+median(q2men)
+median(q2women)
+
+# Since the difference of medians is 3, we add three to each.
+q2women <- q2women + 3
+
+# Perform test.
+library(coin)
+library(exactRankTests)
+ansari.exact(q2men, q2women, alternative = "greater")
+```
+
+
+### Part V:
+State the conclusion of the hypothesis test in the context of the problem.
+
+Based on the results of our test, we can see that our p-value of 0.4534 is above our alpha value of 0.05. Thus, we are failing to reject our null hypothesis and the male doner's heartbeat's variance is not equal to the female variance.
+
+
+
+
+

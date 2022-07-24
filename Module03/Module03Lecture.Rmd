@@ -1,0 +1,389 @@
+---
+title: "Module3Lecture"
+author: "Ethan Gutknecht"
+date: "2/15/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# **Module 3 Lecture:**
+
+
+## **Review:** 
+If we compare the sizes of two of the boxes in a box plot, they are almost the same. They have equal variances. This will decide what test to perform. We have three tests: descriptive, rule of thumb, and test method.
+
+If they are equal: Perform an exact t-test
+If they are NOT equal: Perform an approximate t-test
+
+
+------
+
+
+## **Mann-Whitney Test (aka Wilcoxon Rank Sum Test)**:
+
+#### **Description:**
+This is one of the nonparametric test for testing two location parameters. This will test the median of two populations.
+
+
+#### **Assumptions:**
+1. Both samples are random.
+2. Both are independent from each other.
+3. Both are at least ordinal.
+NOTE: NORMALITY NOT REQUIRED
+
+
+#### **Hypothesis**
+If null is true, values in both samples should be similar.
+If null is false, values in one sample would tend to be smaller than the other sample.
+
+
+#### **RCode:**
+```{r eval=FALSE}
+# # # # THIS CODE WILL NOT RUN, ONLY TO DEMONSTRATE # # # #
+# Import Required Library
+library(exactRankTests)
+
+# Perform Test:
+wilcox.exact(x, y, alternative = c("two.sided", "less", "greater"), paired = FALSE, conf.level = 0.95)
+# Arguments:
+# x = vector of data values (1st population)
+# y = vector of data values (2nd population)
+# PAIR = we will keep this false, when it gets set to true, that will be a test we will do in module four.
+
+```
+
+#### **Example (from slides): **
+
+Test the following data to see if the median high temperaute in Des Moins is higher than the median high tmeperature in Spokane, for randomly sampled days in the summer.
+
+```{r}
+# Data
+pop1 <- c(83, 91, 94, 89, 89, 96, 91, 92, 90)
+pop2 <- c(78, 82, 81, 77, 79, 81, 80, 81)
+```
+
+First, lets test if it breaks the normality assumption.
+
+```{r}
+# Create graphics to prove that they are not normal
+# DO THIS FOR BOTH POPULATIONS:
+# Histogram
+par(mfrow=c(1,2))
+qqnorm(pop1)
+qqline(pop1)
+hist(pop1, main = "Histogram of Des Moines", xlab = "High
+Temperature", ylab = "Frequency")
+
+# Density Plot
+library(ggpubr)
+ggdensity(pop1, xlab ="High Temperature", ylab="Relative
+Frequency", main="Density Plot of Des Moines High Temperature")
+```
+
+**Part I: Why should we use this test:**
+
+Since we can see that the population is not normally distributed, we should run this test.
+
+
+**Part II: Label the parameters:**
+
+Let M1 be the median high temperature in DesMoins in summer.
+Let M2 be the median high temperature in Spokane in summer
+
+
+**Part III: What is the hypothesis?**
+
+$H_{0}$: M1 = M2
+
+$H_{a}$: M1 > M2
+
+
+**Part IV: Compute by hand:**
+
+
+**Part V: Compute a test statistic and p-value using R.**
+
+```{r warning=FALSE}
+# Compute the test stat in R
+library(coin)
+library(exactRankTests)
+
+wilcox.exact(pop1, pop2, alternative = "greater", paired = FALSE, conf.level = 0.95)
+```
+
+**Part VI: State the conclusion of the hypothesis test in the context of the problem.**
+
+Since the p-value is less than 0.05. The test **rejects** the null hypothesis. There is sufficient evidence to conclude that Des Moines has a higher median temperature than Spokan in summer.
+
+
+
+------
+
+
+## **Fisher’s Exact Test for 2 X 2 Contingency Table**:
+
+#### **Description:**
+The goal is to see if two variables (qualitative or dichotomous) are associated. Attributable to R.A. Fisher, one of the founders of experimental statistics, and is an example of a permutation test.
+
+
+#### **Assumptions:**
+1. Row and columns are fixed, not random
+2. Each observation is classified into exactly one cell.
+
+
+#### **Hypothesis**
+$H_{0}$: the two variables are not associated.
+
+$H_{a}$: the two variables are positively associated. (UPPER)
+$H_{a}$: the two variables are negatively associated (LOWER)
+$H_{a}$: the two variables are associated (TWO-TAILED)
+
+
+#### **RCode:**
+
+```{r eval=FALSE}
+# # # # THIS CODE WILL NOT RUN, ONLY TO DEMONSTRATE # # # #
+```
+
+#### **Example (from slides):**
+
+**Part I: Why might Fisher’s exact test be preferred to the two independent population proportions z-test or the chi-square test of homogeneity?:**
+
+For the drug treatment sample, there are three successes (PE Yes) and 8 failures (PE No). For the standard treatment sample, there are four successes and four failures. All of these counts are less than fifteen. These indicate that samples sizes are not sufficiently large as required for two Independent population proportions z test.
+
+The expected counts in the two cells are less than five as required for the chi-squared test of homogeneity fishers exact test does not require that the expected counts in each cell is at least five or there are at least 15 successes and 15 failures in both samples.
+
+
+**Part II:**
+
+Let p_drug = the true probability of experiencing PE when taking the drug.
+
+Let p_standard = the true probability of experiencing PE without taking a drug.
+
+
+**Part III:**
+
+$H_{0}$ = The treatments do not produce any change in the likelihood of PE (= the drug is not effective in reduciing the incidence of PE).
+
+$H_{a}$: The drug treatment lowers the the likelihood of PE (The drug is effective).
+
+
+**Part IV:**
+
+pdrug = 3 / 11 = 0.222
+
+pstandard = 4 / 8 = 0.5
+
+T = Number of observation in cell of row 1, column 3.
+
+**Part V: **
+
+```{r eval=FALSE}
+# Run Test
+fisher.test(PE, alternative = "less")
+
+```
+
+Odds = Number of ways to success / Number of way to failure
+Odds Ratio = (N11)(N22) / (N12)(N21) = (3)(4)/(8)(4) = 0.375
+
+Interpretation: Patients with drug treatment are 0.38 times less likely to experience PE than those with the standard treatment. We are likely comitting a type II error because the sample is too small to have any detection power.
+
+
+**Part VI:** 
+Since the p-value is 0.2966 > 0.05. The test fails to reject the null hypothesis. There is insufficient evidence to conclude that the drug effective in reducing the incidence of PE.
+
+
+---------------------------
+
+
+## **Ratio of Mean Deviances for Testing Equality of Variances**:
+
+#### **Description:**
+
+
+
+#### **Assumptions:**
+1. Random and independent samples
+2. Measurment scale is interval
+3. Populations have the same shape. (Bell, skewed, etc.)
+
+
+#### **Hypothesis**
+
+
+
+#### **RCode:**
+```{r eval=FALSE}
+# # # # THIS CODE WILL NOT RUN, ONLY TO DEMONSTRATE # # # #
+```
+
+#### **Example (from slides): **
+
+**Part I:**
+```{r}
+# Load Package For Density Plot
+library(ggpubr)
+
+
+# See if data will fit this test for first population
+STA261 <- c(81.25, 96.43, 87.83, 86.58, 80.64, 93.57, 61.46, 91.1,
+92.67)
+par(mfrow=c(1,2))
+qqnorm(STA261)
+qqline(STA261)
+hist(STA261, main = "Histogram of Overall Exam Score for STA 261",
+xlab = "Overall Exam Scores", ylab = "Frequency")
+ggdensity(STA261, xlab ="Overall Exam Scores", ylab="Relative
+Frequency", main="Density Plot of STA 261 Scores")
+
+
+## See it for the other population
+STA301<- c(86.5, 97.98, 90.36, 65.3, 94.69, 87.69, 97.11, 96.79, 91.39)
+qqnorm(STA301)
+qqline(STA301)
+hist(STA301, main = "Histogram of Overall Exam Score for STA 301",
+xlab = "Overall Exam Scores", ylab = "Frequency")
+ggdensity(STA301, xlab ="Overall Exam Scores", ylab="Relative
+Frequency", main="Density Plot of STA 301 Scores")
+```
+The normal qq plots, histograms, and density plots suggest that the underlying populations might not be normally distributed as required by the F-test. The ratio of mean deviance does not require the normality assumption.
+
+
+**Part II:**
+
+Let $sigma_{STA261}$ be the true dispersion parameter for the overall exam score for STA261.
+
+Let $sigma_{STA301}$ be the true dispersion parameter for the overall exam score for STA301.
+
+**Part III:**
+
+$H_{0}$: $\sigma_{STA261}$ = $\sigma_{STA301}$
+
+$H_{a}$: $\sigma_{STA261}$ $\neq$ $\sigma_{STA301}$
+
+
+**Part IV:**
+
+```{r}
+dev.STA261 <- STA261 - median(STA261)
+dev.STA301 <- STA301 - median(STA301)
+
+### Sets number of sampled permutations = 9999
+R <- 9999
+
+
+### Combine both samples into one vector
+all <- c(dev.STA261, dev.STA301)
+
+
+### Crete indices for the combined vector
+k <- 1:length(all)
+
+
+### Create storage for permuted test statistics
+reps <- numeric(R)
+
+
+### Calculate the observed test statistic value and print it
+RMD <- (sum(abs(dev.STA261))/length(dev.STA261))/(sum(abs(dev.STA301))/length(dev.STA301))
+RMD
+
+
+### Generate m indices for the first sample, assign permuted sample for STA 261, assign the rest to sample for STA 301, calculate i-th permuted test statistic.
+for (i in 1:R) {
+m <- sample(k, size=length(dev.STA261), replace=FALSE)
+p.STA261 <- all[m]
+p.STA301 <- all[-m]
+reps[i] <-
+(sum(abs(p.STA261))/length(p.STA261))/(sum(abs(p.STA301))/length(p.STA301))}
+
+
+### Calculate and print two-tailed p-value
+if (RMD > 1) pvalue <- mean(c(RMD , reps) >= RMD) + mean(c(RMD ,reps) <= 1/RMD)
+
+if (RMD < 1) pvalue <- mean(c(RMD , reps) <= RMD) + mean(c(RMD , reps) >= 1/RMD)
+
+### == is a logical operator for exactly equal to
+if (RMD == 1) pvalue <- 1
+
+pvalue
+```
+
+**Part V: **
+Since the p-value is 0.7322 > 0.05. The test fails to reject the null hypothesis. There is insufficient evidence to conclude that the 
+
+
+**Part VI: **
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------
+
+
+## **Ansari-Bradley Test for Testing Equality of Variances**:
+
+#### **Description:**
+We sometimes want to resort to rank-based testing for equality of variances between two populations. Use only if your data is very highly skewed.
+
+
+#### **Assumptions:**
+1. Random and independent
+2. At least ordinal
+3. Two populations are identical in all respects (!!equal medians!!) except for a possible difference in dispersion.
+
+
+#### **Hypothesis**
+Same as above test!
+
+
+#### **Example (from slides): **
+
+Same data as above, thus we dont need to check data or hypothesis.
+
+**Question 4**
+**Part II:**
+```{r}
+median(STA261)
+median(STA301)
+STA261 <- STA261 + 3.56
+```
+Medians are not equal, we must make them equal.
+
+```{r}
+library(coin)
+library(exactRankTests)
+ansari.exact(STA261, STA301, alternative = "two.sided")
+```
+
+**Part III:**
+Since the p-value is 0.65267 > 0.05. The test fails to reject the null hypothesis . There is insufficient evidence to conclude that one course produces more consistant overall exam scores than the other.
+
+
+
+# !!! - END OF MODULE 3 - !!!

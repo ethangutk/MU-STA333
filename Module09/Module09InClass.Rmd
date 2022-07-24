@@ -1,0 +1,111 @@
+---
+title: "Module09Homework"
+author: "Ethan Gutknecht"
+date: "5/4/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Question 1:
+**Salaries of College Coaches The data are the salaries (in hundred thousands of dollars) of a sample of 30 college and university coaches in the United Sates. The data reside in a csv file Coaches with a header Salary. Test for normality using Shapiro-Wilk’s test. Use  = 0.05**
+
+#### Part I:
+**Create a normal qq plot and density plot of the data and visually inspect if the sample behaves like a normal sample**
+
+```{r warning=FALSE}
+library(tidyverse)
+library(ggpubr)
+
+Coaches <- read.csv("Coaches.csv", header = TRUE)
+
+qqnorm(Coaches$Salary)
+qqline(Coaches$Salary)
+ggdensity (Coaches$Salary, main = "Density Plot of Salaries of College Coaches In The $100,000", xlab =
+"Salaries in $100,000", ylab = "Relative Frequency")
+```
+By looking at the density plot of the salaries of college coaches, we can see that the plot is a bit right-skewed. There are points on each side of the QQ-plot that stray away from the line, this suggesting that the data is not normal.
+
+#### Part II:
+**State null and alternative hypothesis**
+Ho:F(x) is a normal distribution function with unspecified mean and variances.
+Ha: F(x) is non-normal.
+
+
+#### Part III:
+**Use R to calculate the Shapiro-Wilk’s test statistic and p-value for these data**
+```{r}
+shapiro.test(Coaches$Salary)
+```
+
+
+#### Part IV:
+**State the conclusion of the hypothesis test in the context of the problem**
+With the p-value of 0.01316 being less than 0.05, we have sufficient evidence to reject the null hypothesis. Thus we favor the coaches salaries are non normally distributed.
+
+
+----------------------------------------------------------------------------------------
+
+
+# Question 2:
+**The attached data table (a csv file Employee with a header Time) shows that times in seconds that it took a sample of 16 assembly-line employees to perform a certain operation. Can we conclude that the times required for the population of assembly-line employees to perform the operation are normally distributed with a mean of 7 and standard deviation of 1.2? Test for normality using Kolmogorov test. Use  = 0.05**
+
+#### Part I:
+**Create a normal qq plot and density plot of the data and visually inspect if the sample behaves like a normal sample**
+```{r warning=FALSE}
+library(tidyverse)
+library(ggpubr)
+
+Employee <- read.csv("Employee.csv", header = TRUE)
+
+qqnorm(Employee$Time)
+qqline(Employee$Time)
+ggdensity (Employee$Time, main = "Density Plot of Time It Took To Perform An Operation", xlab =
+"Time It Took To Perform An Operation (s)", ylab = "Relative Frequency")
+```
+Based on the frequency graph, we can see that the data of the time it took to perform an operation in seconds has two peaks. This can suggest that the data could be bi modal.
+
+#### Part II:
+**State null and alternative hypothesis**
+Ho: F(x) = F*(x) for all -infinity < x < +infinity
+Ha: F(x) =/= F*(x) for at least one value of x.
+Where
+F(x) = The time it took to perform an operation in seconds.
+
+
+
+#### Part III:
+**Use R to calculate the Kolmogorov test statistic and p-value for these data**
+```{r}
+ks.test(Employee$Time, "pnorm", mean = 7.0, sd = 1.2)
+```
+
+
+#### Part IV:
+**State the conclusion of the hypothesis test in the context of the problem**
+With our p-value of 0.0431 being less than our alpha value of 0.05, we can conclude that the mean is not 7.0 and the standard deviation is not 1.2.
+
+
+
+
+
+----------------------------------------------------------------------------------------
+
+
+
+# Final Exam Notes:
+- Five Questions
+- 120 Minutes
+- Can bring a cheat sheet that is both side.
+- Point Breakdown
+  - Module 05; 25 points
+  - Module 06; 15 points
+  - Module 07: 20 points
+  - Module 08: 20 points;
+  - Module 09: 20 points.
+- R Code will be provided
+- In class ex 5-9 help
+  
+  

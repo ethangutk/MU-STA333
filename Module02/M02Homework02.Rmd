@@ -1,0 +1,140 @@
+---
+title: "Module 02: Homework 02"
+author: "Ethan Gutknecht"
+date: "2/11/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Import all needed libraries
+library(ggpubr)
+library(randtests)
+```
+
+
+
+----
+
+
+
+## **Question 01:**
+#### Fifteen heroin addicts were asked to state the age at which they first started using the drug. The results are shown below. Can one conclude from these data that the median age of the sampled population is not 20 years? Use the Sign test.
+### Part I:
+#### Why might the one-sample sign test be preferred to the one-sample t-test for these data?
+
+What this question is looking for is the median of the ages of heroin addicts. The sign test can test for this but first lets check the assumptions.
+
+```{r}
+# Create a vector with all of the ages of the addicts.
+q1Data <- c(22, 24,37, 28, 15, 14, 22, 16, 18, 17, 23, 16, 20, 18, 15)
+
+# Lets test to see if the data is normal with a histogram and a density plot
+hist(q1Data,  main  =  "Histogram  of  Heroin Addict Ages",  xlab  =  "Ages", ylab = "Frequency")
+ggdensity(q1Data,  xlab  ="Age",  ylab="Relative Frequency", main="Density Plot of Heroin Addict Ages")
+
+```
+
+As you can see from these plots, this data is very right skewed. Thus, we have enough evidence to assume that our data set is not normal. So, we will use the Sign Test to test for the median.
+
+
+### Part II:
+#### Label the parameter.
+m = median ages of heroin addicts
+
+
+### Part III:
+#### State null and alternative hypotheses.
+$H_{0}$: *M* = 20 Years Old
+
+$H_{a}$: *M* $\neq$ 20 Years Old
+
+
+### Part IV:
+#### Compute a test statistic and p-value using R.
+```{r}
+# Complete the sign test
+binom.test(length(q1Data[q1Data>20]), sum(q1Data !=20), p=0.5, "two.sided")
+```
+
+### Part V:
+#### State the conclusion of the hypothesis test in the context of the problem.
+As we can see from our test, our P-value is greater than 0.05. This means that we fail to reject the null hypothesis. In context, we have insufficient evidence that the median age of heroin addicts within this group of people is 20 years old.
+
+
+
+----
+
+
+
+## **Question 02:**
+#### In manufacturing processes, it is of interest to know with confidence the proportion of defective parts. Suppose that we want to be reasonably certain that less than 4% of a company’s widgets are defective. To test this, we obtain a random sample of 250 widgets from a large batch. Each of the 250 widgets is tested for defects, and 6 are determined to be defective, based upon the manufacturer’s standards. Using α = 0.01, is this evidence that less than 4% of the company’s widgets are defective?  Use the Binomial test.
+### Part I:
+#### Why might the one-sample binomial test be preferred to the one-sample z-test for proportion for these data?
+We prefer this test over the one-sample z-test because the sample we are given is not large. Furthermore, this test fits all of the assumptions for a binomial test like having two outcomes and static rate of success.
+
+
+
+### Part II:
+#### Label the parameter.
+m = defective percentage of widgets
+
+
+### Part III:
+#### State null and alternative hypotheses.
+$H_{0}$: m = 4%
+
+$H_{a}$: m < 4%
+
+
+### Part IV:
+#### Compute a test statistic and p-value using R.
+```{r}
+# Complete the sign test
+# 250 Random Trials
+# 4% defected rate
+# 6 Were tested to be defected, 
+binom.test(6, 250, p=0.04, "greater")
+```
+
+### Part V:
+#### State the conclusion of the hypothesis test in the context of the problem.
+Based on the test that we ran, we can see that our p-value is 0.9367 Thus, in context, we have sufficient evidence that the manufacturing process does not exceed the defected rate of 4%.
+
+
+
+----
+
+
+
+## **Question 03:**
+#### The following table shows the actual daily occurrence of sunshine in Atlanta during November 1974, as a percentage of the possible time the sun could have shown if it had not been for cloudy skies. The data are from the U.S. Department of Commerce. Test the null hypothesis that the pattern of occurrence of sunshine is random. Use the runs test for randomness.
+### Part I:
+#### State null and alternative hypotheses.
+
+$H_{0}$: The pattern of occurrence of possible time the sun could have shown if it had not been for cloudy skies is determined by a random process.
+
+$H_{a}$: The pattern of occurrence possible time the sun could have shown if it had not been for cloudy skies is not determined  by  a  random  process  (can  be  one  sided,  too  few  or  too many runs).
+
+
+### Part II:
+#### Compute a test statistic and p-value using R.
+```{r}
+# Percentage of sunshine by the day.
+q3Data <- c(85,85,99,70,17,74,100,28,100,100,31,86100,0,100,100,46,7,12,54,87100,100,88,50,100,100,100,48,0)
+
+# Run randomness test
+runs.test(q3Data)
+```
+
+
+
+### Part III:
+#### State the conclusion of the hypothesis test in the context of the problem.
+Based on the results of the randomness test which has a p-value of 1, we have insufficient evidence that the possible time the sun could have shown if it had not been for cloudy skies is not random.
+
+
+----
+
+

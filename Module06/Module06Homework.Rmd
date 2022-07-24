@@ -1,0 +1,61 @@
+---
+title: "Module 06 - Homework"
+author: "Ethan Gutknecht"
+date: "4/5/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+**An anthropologist records the heights (in inches) of ten fathers and their sons. Does the following data support (at the 5% level) that taller fathers tend to have taller sons? Use the Kendall’s Tau.**
+
+-----------------
+
+#### Part I:
+**Why might the Kendall’s Tau ($\tau$) be preferred to the Pearson’s Correlation Coefficient for these data? (20 points)**
+```{r}
+SonsHeight <- c(72, 68, 74, 66, 71, 65, 70, 69, 67, 80)
+FathersHeight <- c(70, 73, 72, 68, 69, 71, 78, 67, 65, 66)
+
+plot(FathersHeight ~ SonsHeight, pch = 20, main = "Scatterplot of Fathers Heights", ylab = "Height (inches)", xlab="Height of Sons (inches)")
+```
+
+The scatter plot suggests that the association between the height of sons and fathers does not appear to be linear as required for the persons correlation coefficient. Kendalls Tau does not require a linear assocaitation between two variables.
+
+
+#### Part II:
+**Use R to calculate the Kendall’s Correlation coefficient ($\tau$) for these data (20 points)**
+```{r}
+cor(SonsHeight, FathersHeight, method = "kendall")
+```
+
+
+
+#### Part III:
+**State null and alternative hypotheses (20 points)**
+Ho:The height of fathers and the height of sons are mutually independent.
+Ha: The height of fathers and the height of sons are positively correlated.
+
+
+
+#### Part IV:
+**Compute a test statistic and p-value using R (20 points)**
+```{r}
+cor.test(SonsHeight, FathersHeight, alternative = "greater", method = "kendall")
+# cor.test(SonsHeight, FathersHeight, alternative = "greater", method = "kendall", use = "complete.obs")
+```
+
+
+
+#### Part V:
+**State the conclusion of the hypothesis test in the context of the problem (20 points)**
+
+Since the p-value of 0.5 is greater than 0.05, we fail to reject the null hypothesis. Thus, we have sufficient evidence to suggest that that there is a positive correlation between fathers heights and sons heights. ($\tau$ = 0.0222, T = 23, p-value = 0.5) 
+
+
+
+
+

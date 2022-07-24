@@ -1,0 +1,298 @@
+---
+title: "Module 05 - Notes"
+author: "Ethan Gutknecht"
+date: "3/10/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Module 05 - Notes
+#### Tests in this Module:
+- Kruskal-Wallis Test for Three or More Independent Samples
+- Permutation F-Test for Three or More Independent Samples
+- Van Der Waerden Test for Three or More Independent Samples
+
+
+
+## Some Important Notations:
+ Y bar = Overall mean
+Each group mean
+ni = sample size for each group
+YiJ = Jth observation for the ith group
+N = total sample size
+K = # of groups or number of populations
+
+
+## Kruskal-Wallis Test for Three or More Independent Samples
+
+#### Assumptions: 
+1. All samples are random samples from their respective population.
+2. In addition to independence within each sample, there is mutual independence among the various samples.
+3. The measurement scale is at least ordinal.
+4. Either the k population distribution functions are identical or else some of the populations tend to yield larger values than other population do.
+
+#### Hypothesis:
+
+Ho: the k populations are all located in the same place (e.g. equal “locations”)
+
+Ha: at least two of the populations have different locations (e.g. different “locations”)
+
+#### T-Stat
+1. Rank the N observations from smallest to largest
+2. If observations are tied, assign the average rank to each of the tied observations.
+
+
+#### Example
+The amount of iron present in the livers of white rats is measured after the animals had been fed one of five diets for a perscribed length of time. There were 10 animals randomly assigned to each of the five dietes. Do the diets appear to affect the amount of iron present in the livers? Alpha = 0.05.
+
+
+##### Part I:
+**Why might the Kruskal-Wallis test for k populations be preferred to the one-way ANOVA F-test for these data?**
+The side by side box plot suggests that the populations B and C might be skewed to the right. Also we may suspect an equal variance problem with the data, as the distributions of iron for diets B and C are more dispersed than for diets A and D These indicate that the normality equal variance assumptions might not be satisfied as required for one-way ANOVA F-test. The test for K populations are not rquired for one way anova F tests the Krusikal-wallis test for K populatikons adoes not require the normality and equla variance assumptions.
+
+
+##### Part II:
+**Label the parameters**
+Let Ma  be the mean iron level presents in the livers of white rats fed with diet A.
+Let Mb  be the mean iron level presents in the livers of white rats fed with diet B.
+Let Mc  be the mean iron level presents in the livers of white rats fed with diet C.
+Let Md  be the mean iron level presents in the livers of white rats fed with diet D.
+Let Me  be the mean iron level presents in the livers of white rats fed with diet E.
+
+
+##### Part III:
+**State null and alternative hypotheses**
+Ho: The iron distribution functions for all five diets are identical.
+Ha: At least two of the five diets do not have identical mean iron levels.
+
+
+##### Part IV:
+**Compute a test statistic and p-value using R**
+IF there are ties in the data: use kruskal.test()
+If there are no ties in the dataL use kruskal_test()
+
+```{r}
+Diet <- c("A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "B", "B", "B", "B", "B", "B", "B", "B", "B", "B", "C", "C", "C", "C", "C", "C", "C", "C", "C", "C", "D", "D", "D", "D", "D", "D", "D", "D", "D", "D", "E", "E", "E", "E", "E", "E", "E", "E", "E", "E")
+Iron <- c(2.23, 1.14, 2.63, 1.00, 1.35, 2.01, 1.64, 1.13, 1.01, 1.70, 5.59, 0.96, 6.96, 1.23, 1.61, 2.94, 1.96, 3.68, 1.54, 2.59, 4.50, 3.92, 10.33, 8.23, 2.07, 4.90, 6.84, 6.42, 3.72, 6.00, 1.35, 1.06, 0.74, 0.96, 1.16, 2.08, 0.69, 0.68, 0.84, 1.34, 1.40, 1.51, 2.49, 1.74, 1.59, 1.36, 3.00, 4.81, 5.21, 5.12)
+Rat <- data.frame(Diet, Iron)
+rank(Rat[,2])
+
+library(coin)
+kruskal_test(Iron ~ factor(Diet), data = Rat)
+```
+
+
+##### Part V:
+**State the conclusion of the hypothesis test in the context of the problem**
+The KW test statistic X^2 = 27.878, with the p-value is < 0.0001. Since our p-value is less than 0.0001 < alpha 0.05, the test rejects the null hypothesis. There is significant evidence to conclude that at least two of the five diets do not have identical mean iron levels.
+
+
+------------------------
+------------------------
+------------------------
+
+## Permutation F-test
+
+#### Assumptions: 
+
+#### Hypothesis:
+
+Ho: 
+
+Ha: 
+
+#### T-Stat
+
+#### Example
+Three different medications are
+tested on a sample of 18 individuals to see if they impact alertness.
+Each subject is randomly assigned one drug, the drug is administered.
+After 60 minutes, a test is administered that scores the alertness level of each subject (a higher score means higher alertness). Do different
+medications have a different impact on alertness? If so, which drugs
+differ and in what way do they differ?
+
+##### Part I:
+**Why might a permutation F-test be preferred to the one-way ANOVA F-test for these data?**
+The side by side box plot suggests that the scores under drug "C" seem to be noticeably lower on average than for the other two drugs. The drug C population might be skewed to the left due to the low outline. Also we may suspect an equal variance problem with the data, as the distributions of scores for drugs A and B are more disperse than for drug C. These indicate that teh normality and equal variance assumptions might not be satisfied as required for one-way anova F-Tests. A permutation f test does not require a normality or equal variance assumption.
+
+##### Part II:
+**Label the parameters**
+Let Ma be the mean alertness scores for drug A.
+Let Mb be the mean alertness scores for drug B
+Let Mc be the mean alertness scores for drug C
+
+
+##### Part III:
+**State null and alternative hypotheses**
+Ho: The alertness score distribution functions for all three drugs are identical
+Ha: At least two of the three drugs do not have identical mean alertness scores.
+
+
+##### Part IV:
+**Compute a test statistic and p-value using R**
+```{r eval=FALSE}
+R <- 9999 # Replications
+reps <- numeric(R)
+raw.results <- lm(Alertness~Drug, data = Medicine)
+Fobs <- summary(raw.results)$f[1]
+Fobs
+```
+
+##### Part V:
+**State the conclusion of the hypothesis test in the context of the problem**
+The test comparing the three population means is significant (F=10.75, df1 = K - 1 = 3 - 1 = 2, df2 = N - K = 18 - 3 = 15, P-value = 0.0024). Thus we could conclude that at least two of the three drug produces significantly different mean alertness responses.
+
+------------------------
+------------------------
+------------------------
+
+## Nonparametric Multiple Comparison Procedure
+How many pairwise compairisons are possible
+
+The # of possible comparisons
+= K(K-1) / 2
+
+In this example, there are K=3 drugs
+
+=3(3 - 1) / 2 = 3
+A vs B
+A vs C
+B vs C
+
+#### RCode:
+
+This is for subset two. There would be three total subsets of this to check in this current example.
+```{r eval=FALSE}
+subset2 <- Medicine[Medicine$Drug=='A' | Medicine$Drug=='C', ]
+R <- 9999
+reps <- numeric(R)
+raw.results <- lm(Alertness ~ Drug, data=subset2)
+Fobs <- summary(raw.results)$f[1]
+Fobs
+
+for (i in 1:R) {
+  shuffle <- data.frame(Drug = subset2$Drug,
+  Alertness=sample(subset2$Alertness,
+  size=length(subset2$Alertness),
+  replace=FALSE))
+  shuffled.results <- lm(Alertness ~ Drug, data=shuffle)
+  reps[i] <- summary(shuffled.results)$f[1]
+}
+pvalue <- mean(c(Fobs, reps) >= Fobs)
+pvalue
+```
+
+##### Note:
+If alpha value is not defined, use 0.05.
+
+More about the Bonferroni adjustment
+1.  raw p-value * the number of tests
+    = adjusted p-value * compare this with alpha
+2.  compare unadjusted p-value with alpha / number of tests
+    = 0.05/3.0 = 0.1666...
+
+#### Conclusion:
+
+A vs B  |  A vs C  |  B vs C
+0.7732  |  0.0132  |  0.0114
+
+The significant differences are between drugs A vs C and B vs C. The boxplot of the three alertness samples distributions support these results. Form the plot we may enhance the findings by adding that drug C produces significantly lower alertness than either A or B.
+
+
+------------------------
+------------------------
+------------------------
+
+
+## Van Der Waerden Test for K Populations
+
+#### Assumptions: 
+1. All samples are random samples from their populations
+2. Mutual independence within each sample
+3. The measurement is at least ordinal
+4. Distribution functions are identical
+
+
+#### Hypothesis:
+
+Ho: the k populations are all located in the same place (e.g. equal “locations”)
+
+Ha: at least two of the populations have different locations (e.g. different “locations”)
+
+#### T-Stat
+1. Rank observations 1 to N
+2. Convert each rank to quantiles of a standard normal
+3. Find average of K samples
+
+#### Example
+Random samples from each of the three different types of light bulbs were tested to see how long the light bulb lasts. Do these results indicate a significant difference between the brands? Alpha = 0.05.
+##### Part I:
+**Why might the Van Der Waerden test be preferred to the one-way ANOVA F-test for these data?**
+
+```{r}
+Brand <- c("A", "A", "A", "A", "A","B", "B", "B", "B", "C", "C", "C", "C")
+Life <- c(73, 64, 67, 62, 70, 84, 80, 81, 77, 82, 79, 71, 75)
+Bulb <- data.frame(Brand, Life)
+boxplot (Life ~ Brand, data = Bulb, main = "Side by Side Boxplot")
+```
+The side by side box plot suggest that the lifetime of the light bulbs under brand A seems to be noticeably lower on average than for the other two brands. We may suspect an equal variance problem with the data as the distribution of lifetime for brand B are less dispersed than for brand A and C. This indicates that the equal variance assumption might not be satisfied as required for one way anova. Thus this test is a great alternative because it does not require it.
+
+
+##### Part II:
+**Label the parameters**
+Let Ma be the mean lifetime for light bulbs brand A
+Let Mb be the mean lifetime for light bulbs brand B
+Let Mc be the mean lifetime for light bulbs brand C
+
+
+
+##### Part III:
+**State null and alternative hypotheses**
+Ho: The lifetime distribution functions for all three light bulbs brands are identical.
+
+Ha: At least one of the three light bulb brands do not have identical mean lifetime.
+
+
+##### Part IV:
+**Write the null distribution in mathematical notation**
+
+T1 ~ X^2(2)
+Note: K = 3, K - 1 = 2
+
+
+##### Part V:
+**Compute a test statistic and p-value using R**
+```{r eval=FALSE}
+# library(agricolae)
+# waerden.test(Life, Brand, alpha = 0.05, group = TRUE, main = NULL, console = TRUE)
+```
+
+
+##### Part VI:
+**State the conclusion of the hypothesis test in the context of the problem**
+The Van Der Waerden test statistic is X^2 = 7.973 with a p-value =0.0186. since the p-value < alpha = 0.05. The test rejects the null hypothesis. Thus, we can conclude that at least two of the three light bulb brands produce a significantly different mean lifetime.
+
+##### Part VII:
+**Summarize the result of nonparametric multiple comparison procedure**
+Comparison | A vs B | B vs C | B vs C
+P- value   | 0.0016 | 0.0142 | 0.2364
+
+The significant differences are between light bulb brands A vs B and A vs C. The box plot of the three brands sample distributions support these results. From that plot, we may enhance the findings by adding that the light bulbs brand A has significantly lower lifetime than either B or C. The lifetime of the light bulbs brands B and C are identical.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

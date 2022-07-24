@@ -1,0 +1,84 @@
+---
+title: "Module02 - In Class"
+author: "Ethan Gutknecht"
+date: "2/10/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(ggpubr)
+library(exactRankTests)
+library(randtests)
+```
+
+# Module 02 - In Class Exercise
+
+
+## Question 1
+#### Part 1
+
+```{r}
+q1Data <- c(7.1, 4.4, 3.9, 2.2, 4.2, 3.4, 1.1, 6.1, 2.2, 6.7, 4.9, 7.3, 0.3, 7.6)
+
+hist(q1Data,  main  =  "Histogram  of  Distances",  xlab  =  "Distance  in 
+Miles", ylab = "Frequency")
+
+ggdensity(q1Data,  xlab  ="Distance To Emergency", 
+ylab="Relative Frequency", main="Density Plot of Hour Spend")
+```
+
+Since this data does not seem to be normal, it breaks the assumption. Due to this, we will have to find the median using a nonparametric statistic. The best test that we have that fits this questions needs is the Wilcoxon Signed-Rank test.
+
+
+
+#### Part II 
+m = median accident distance from the dam
+
+
+
+#### Part III
+$H_{0}$: m = 4
+
+$H_{a}$: m < 4
+
+
+
+#### Part IV
+```{r warning=FALSE}
+wilcox.exact(q1Data, alternative = c("greater"), mu = 4);
+```
+
+
+
+#### Part V
+Since the P-value is greater than 0.05, we have insufficient evidence from the test that states taht the median is greater than four.
+
+
+
+## Question 2
+#### Part I
+
+$H_{0}$: There is no trend in the number of crops sold.
+
+$H_{a}$: There is a downward trend in the number of crops sold.
+
+
+
+#### Part II
+
+```{r}
+
+# Create dataframe
+q2Data <- data.frame(
+  CropsInsured = c(19479, 26667, 63969, 57715, 38086, 38434, 24196, 19319, 29975, 25451, 20410, 19910, 15628, 15375, 21312, 26526, 24865, 21152, 23458, 25774, 32646, 31786, 24821, 19593, 14960),
+  Years = c(1948, 1949, 1950, 1951, 1952, 1953, 1954, 1955, 1956, 1957, 1958, 1959, 1960, 1961, 1962, 1963, 1964, 1965, 1966, 1967, 1968, 1969, 1970, 1971, 1972))
+
+# Compute test
+cox.stuart.test(q2Data$CropsInsured, "left.sided") 
+```
+
+
+#### Part III
+The test fails to reject the null hypothesis due to the p-value being under 0.05.

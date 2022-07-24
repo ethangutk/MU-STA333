@@ -1,0 +1,50 @@
+---
+title: "Module09Homework"
+author: "Ethan Gutknecht"
+date: "5/4/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Question 1:
+**The number of faculty listed for a variety of private colleges that offer only bachelor’s degree is reside in a csv file faculty with a header Number. Test for normality using Lilliefors test. Use  = 0.10.**
+
+#### Part I:
+**Create a normal qq plot and density plot of the data and visually inspect if the sample behaves like a normal sample**
+```{r warning=FALSE}
+library(tidyverse)
+library(ggpubr)
+
+Faculty <- read.csv("Faculty.csv", header = TRUE)
+
+qqnorm(Faculty$Number)
+qqline(Faculty$Number)
+ggdensity (Faculty$Number, main = "Density Plot of Faculty Numbers", xlab =
+"Faculty Numbers", ylab = "Relative Frequency")
+```
+The density plot shows that the data could be potentially left skewed. The QQplot also has points going a-stray towards the higher end.
+
+
+#### Part II:
+**State null and alternative hypothesis**
+
+Ho: The Faculty numbers have a normal distribution with an unknown mean and standard deviation.
+Ha: The distribution function of the Faculty Numbers is non normal.
+
+
+#### Part III:
+**Use R to calculate the Lilliefors test statistic and p-value for these data**
+
+```{r}
+library(nortest)
+lillie.test(Faculty$Number)
+```
+
+
+#### Part IV:
+**State the conclusion of the hypothesis test in the context of the problem**
+
+Since our p-value of 0.06818 is less than our alpha value of 0.10, we have sufficient evidence to reject the null hypothesis. Thus, the we favor the idea that the data is not normally distributed.

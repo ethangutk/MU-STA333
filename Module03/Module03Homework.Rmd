@@ -1,0 +1,64 @@
+---
+title: "Module 03 - Homework"
+author: "Ethan Gutknecht"
+date: "2/24/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+---------------------------
+
+
+
+# Question 1
+
+In a study of contamination of farm wells, contaminated water was classified as either “low contamination” or “high contamination,” and the distance of the well from a potential source of organic contamination was classified as either “nearby” or “not nearby.” Test for a significant association between distance and contamination using Fisher’s Exact Test for 2 X 2 Contingency Table. Use  = 0.05.
+
+### Part I:
+**Why might Fisher’s exact test for 2 X 2 contingency table be preferred to the two independent population proportions z-test or the chi-square test of homogeneity?**
+
+For the study of farming wells, we can see that the expected counts of two of the four cells are below the minimum of five observations. Though, this is not a requirement, there is a requirement to have 15 successes and 15 failures. Since we do not meet this requirement, we should perform the Fisher's exact test.
+
+
+### Part II:
+**Label the parameters.**
+
+Let p_drug = the true probability of there being an association between distance and contamination.
+
+Let p_standard = the true probability of there being an association between distance and contamination.
+
+
+
+### Part III:
+**State null and alternative hypotheses.**
+
+$H_{0}$: the distance does not affect the contamination.
+
+$H_{a}$: the distance lowers the contamination.
+
+
+
+### Part IV:
+**Compute a test statistic and p-value using R.**
+```{r}
+# Create the table
+table <- matrix(c(4, 3, 9, 0), nrow = 2)
+
+# Perform fisher test
+fisher.test(table, alternative="less")
+```
+
+### Part V:
+**State the conclusion of the hypothesis test in the context of the problem.**
+
+Based on the results of our test, we fail to reject the null hypothesis. This is because our p-value of 0.0625 is above our alpha value of 0.05. Thus, there is no correlation between distance and the contamination measurement of farming wells.
+
+
+
+
+

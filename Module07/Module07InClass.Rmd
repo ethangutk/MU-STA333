@@ -1,0 +1,134 @@
+---
+title: "Module07InClass"
+author: "Ethan Gutknecht"
+date: "4/19/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1:
+NarStor is a computer disk drive manufacturer. Technicians ran 16 NarStor hard drives continuously for almost three years. The times to failure (in hours) are given  in  the  following  table.  Construct  and  interpret  a  90%  bootstrap  (percentile)  confidence  interval for the mean failure time (in hours) of NarStor computer disk drive.
+```{r}
+data <- c(330,  620,  1870,  2410,  4620,  6396,  7822,  8102,  8309,  12882,  14419,  16092,  18384,  20916, 23812, 25814)
+```
+
+#### Part I:
+Why  might  the  bootstrap  confidence  interval  be  preferred  to  the  one-sample  t-confidence interval for these data? 
+```{r}
+library(ggpubr)
+
+par(mfrow=c(1,2)) # sets up a plot window for two side-by-side plots
+qqnorm(data)
+qqline(data)
+
+
+hist(data, main = "Histogram of Times To Failure in Hours", xlab = "Time in Hours", ylab = "Frequency")
+
+ggdensity(data, xlab = "Time in Hours", ylab= "Relative Frequency", main = "Density Plot of Hours")
+```
+The bootstrap method will be perfered 
+
+
+#### Part II:
+Label the parameter 
+Let Mu be the mean failure time in hours of NarStor's computer disk drive.
+
+
+#### Part III:
+Construct a 90% bootstrap (percentile) confidence interval for the mean failure time (in hours) of NarStor computer disk drive using R
+```{r}
+bootmean <- numeric(1000)
+for (i in 1:1000) {
+    bootsample <- sample(data, size=length(data), replace=TRUE) 
+    bootmean[i] <- mean(bootsample)
+}
+quantile(bootmean, c(0.05, 0.95))
+```
+
+#### Part IV:
+Interpret  a  90%  bootstrap  (percentile)  confidence  interval  for  the  mean  failure time (in hours) of NarStor computer disk drive in context 
+```{r}
+par(mfrow=c(1,2))
+hist(bootmean)
+abline(v=mean(bootmean))
+qqnorm(bootmean)
+qqline(bootmean)
+```
+
+#### Part V:
+Comment the overall shape of the sampling distribution of 𝑥 (as approximated by bootstrapping) 
+
+The overall shape of 
+
+
+## Question 2
+The following high temperature data were collected for randomly sampled days  in  the  summer  in  Des  Moines  and  Spokane.  Use  bootstrapping  to  estimate,  with  95% confidence, the true mean difference in high temperature in summer between Des Moines and Spokane. 
+```{r}
+A <- c(83, 91, 94, 89, 89, 96, 91, 92, 90)
+B <- c(78, 82, 81, 77, 79, 81, 80, 81)
+```
+
+#### Part I:
+Why might the bootstrap confidence interval be preferred to the two independent random samples t-confidence interval for population means for these data?
+```{r}
+par(mfrow=c(1,2))
+
+hist(A, main = "Histogram of Diet A", xlab = "Growth", ylab = "Frequency")
+qqnorm(A)
+qqline(A)
+ggdensity(A, xlab = "Growth", ylab= "Relative Frequency", main = "Density Plot of Diet A")
+
+hist(B, main = "Histogram of Diet B", xlab = "Growth", ylab = "Frequency")
+qqnorm(B)
+qqline(B)
+
+ggdensity(B, xlab = "Growth", ylab= "Relative Frequency", main = "Density Plot of Diet B")
+```
+
+#### Part II:
+Label the parameters.
+
+Let Ma be the mean high temperature data of summer days in Des Moines
+Let Mb be the mean high temperature data of summer days in Spokane.
+
+Let (Ma - Mb) be the difference between the two cities.
+
+#### Part III:
+From  the  bootstrap  distribution  for  the  sample  mean  differences,  calculate  the estimated bias. Comment the overall shape of the sampling distribution of sample mean  differences (as approximated by bootstrapping) 
+```{r}
+obs.diff <- mean(A) - mean(B)
+bootdiff <- numeric(1000)
+for (i in 1:1000) {
+  bootsampleA <- sample(A, size=length(A), replace=TRUE)
+  bootsampleB <- sample(B, size=length(B), replace=TRUE)
+  bootdiff[i] <- mean(bootsampleA) - mean(bootsampleB)
+}
+
+est.bias <- mean(bootdiff) - obs.diff
+est.bias
+
+par(mfrow=c(1,2))
+hist(bootdiff)
+abline(v=obs.diff)
+abline(v=mean(bootdiff),lty=2) # add dashed line mean of the bootstrap dist
+qqnorm(bootdiff)
+qqline(bootdiff)
+```
+
+#### Part IV:
+Construct and interpret a 95% bootstrap confidence interval (BCa based) for the  true mean difference in high temperature in summer between Des Moines and Spokane using R add-on package boot 
+
+```{r}
+library(boot)
+
+mymean <- function(bootdiff,i) mean(bootdiff[i])
+myboot <- boot(bootdiff, mymean, R = 1000)
+myboot
+```
+
+
+
+

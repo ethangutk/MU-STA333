@@ -1,0 +1,108 @@
+---
+title: "Module06InClass"
+author: "Ethan Gutknecht"
+date: "4/7/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE, cache=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Question 1:
+
+### Part I:
+**Why might the Spearman’s Rho be preferred to the Pearson’s Correlation Coefficient for these data?**
+```{r}
+SonsHeight <- c(72, 68, 74, 66, 71, 65, 70, 69, 67, 80)
+FathersHeight <- c(70, 73, 72, 68, 69, 71, 78, 67, 65, 66)
+plot(FathersHeight ~ SonsHeight, pch = 20, main = "Scatterplot of Fathers Heights", ylab = "Height (inches)", xlab="Height of Sons (inches)")
+```
+The scatter plot suggests that the association between the Son's heights and father's heights does not appear to be linear as required for the Pearson correlation coefficient. The Spearman's Rho does not require a linear relationship between variables
+
+
+### Part II:
+**Use R to calculate the Spearman’s Correlation coefficient for these data**
+```{r}
+cor(FathersHeight, SonsHeight, method = "spearman")
+```
+
+
+### Part III:
+**State null and alternative hypotheses**
+
+Ho: The height of fathers and the height of sons are mutually independent.
+Ha: The height of fathers and the height of sons are positively correlated.
+
+
+### Part VI:
+**Compute a test statistic and p-value using R**
+```{r}
+cor.test(FathersHeight, SonsHeight, alternative = "greater", method = "spearman")
+```
+
+### Part V:
+**State the conclusion of the hypothesis test in the context of the problem**
+Since the p-value of 0.4864 is greater than 0.05, we fail to reject the null hypothesis. Thus, we have sufficient evidence to suggest that that there is a positive correlation between fathers heights and sons heights. ($\rho$ = 0.01818, S = 162, p-value = 0.4864) 
+
+
+# Question 2
+**After a mother-daughter golf tournament, mothers and daughters were ranked among themselves. Does the following data show (at the 5% level) a correlation between the daughters’ and mothers’ golf skills? Use a permutation test for the Spearman’s Rho.**
+
+### Part I:
+**Why might the Spearman’s Rho be preferred to the Pearson’s Correlation Coefficient for these data? **
+```{r}
+Daughter <- c(1,9,10,2,4,5,3,7,6,8)
+Mother <- c(5,4,8,2,1,3,6,7,10,9)
+
+plot(Daughter ~ Mother, pch = 20, main = "Scatterplot of Golf Rank Levels", ylab = " Daughters's Rank", xlab="Mother's Rank")
+```
+
+
+### Part II:
+**State null and alternative hypothesis**
+Ho: The golf rank of daughter and golf rank of the mothers are mutually independent.
+Ha: The golf rank of daughter's and the golf rank of the mother are not correlated.
+
+### Part III:
+**Compute the Spearman’s Correlation coefficient and p-value for these data using R (permutation based)**
+```{r}
+set.seed(42)
+R <- 9999
+reps <- numeric(R)
+
+# Calculate the observed Spearman rank correlation
+spearmancorr <- cor(Daughter, Mother, method = "spearman")
+spearmancorr
+
+for (i in 1:R) {
+  x <- Daughter
+  y <- sample(Mother, replace = FALSE)
+  reps[i] <- cor(y, x, method = "spearman")
+}
+
+pvalue <- mean(c(spearmancorr, reps) >= spearmancorr) # Change sign if its positive or negative
+pvalue
+
+twotailedpvalue = 2*pvalue
+twotailedpvalue
+```
+With our p-value of 0.1588, we fail to reject the null hypothesis. There is a positive correlation between the mother and daughters ranks.
+
+
+### Part IV:
+**State the conclusion of the hypothesis test in the context of the problem**
+Ho: The golf ranks of the mothers and daughters are mutually independent.
+Ha: The golf ranks of the mothers and daughters are positively correlated.
+
+### Part V:
+**Make a histogram of the null distribution of Spearman rank correlation**
+```{r}
+hist(reps, main = "Null distribution of Spearman rank correlation")
+
+abline(v = spearmancorr, lty = 2 ,col = "red")
+```
+As we can see
+
+
+

@@ -1,0 +1,71 @@
+---
+title: "Module05 - Homework"
+author: "Ethan Gutknecht"
+date: "3/29/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+
+A real estate agent sells single-family homes in the towns of Mouse Creek, Spring Valley, 
+and Smyrna? Some homes for sale in these towns have the following prices (in thousands 
+of dollars). Use the Kruskal-Wallis Test to check whether the house prices in these sample 
+come from identical populations. Use 𝛼 = 0.05 **(100 points)**
+
+#### Part I:
+**Why might the Kruskal-Wallis test for k populations be preferred to the one-way  ANOVA F-test for these data?**
+```{r}
+# Create data vectors
+Towns <- c("Mouse Creek", "Mouse Creek", "Mouse Creek", "Mouse Creek", "Mouse Creek",
+          "Spring Valley",  "Spring Valley",  "Spring Valley",  "Spring Valley",  "Spring Valley",  "Spring Valley",
+          "Smyrna",   "Smyrna",   "Smyrna",   "Smyrna",   "Smyrna")
+Prices <- c(89,114,142,164,219,
+          128,147,168,222,289,489,
+          82,129,149,169,389)
+
+# Create data frame
+HouseData <- data.frame(Towns, Prices)
+
+# Create a box plot of the data
+boxplot (Prices ~ Towns, data = HouseData, main = "Side by Side Boxplot")
+```
+
+Based on the results from our box plots, we can see that all three towns have different distributions, Spring Valley being the most drastic. With the trails of the data being different in all three, the normality assumption might be broken as well. Since we can suspect that the variance and normality assumption is not met, we cannot use the One Way ANOVA test due it those being a requirement. Thus, we can use the Kruskal-Wallis test for k populations since it does not require those assumptions.
+
+
+
+
+#### Part II:
+**Label the parameters**
+
+Let M1  be the mean price of a home sold in Mouse Creek.
+Let M2  be the mean price of a home sold in Smyrana.
+Let M3  be the mean price of a home sold in Spring Valley.
+
+
+#### Part III:
+**State null and alternative hypotheses**
+
+Ho: The price distribution functions for all three towns are identical.
+Ha: At least two of the three towns do not have identical mean prices sold.
+
+
+#### Part IV:
+**Compute a test statistic and p-value using R **
+```{r warning=FALSE}
+library(coin)
+kruskal_test(Prices ~ factor(Towns), data = HouseData)
+```
+
+
+#### Part V:
+**State the conclusion of the hypothesis test in the context of the problem (26 points) **
+
+Since the p-value of 0.3213 is greater than our alpha value of 0.05, we have sufficient evidence to fail to reject the null hypothesis. Thus, we have sufficient evidence to suggest that all three towns price distribution functions are identical.
+
+
+
